@@ -31,6 +31,7 @@ import com.example.instagramclone.DestinationScreen
 import com.example.instagramclone.IgViewModel
 import com.example.instagramclone.R
 import com.example.instagramclone.main.CommonProgressSpinner
+import com.example.instagramclone.main.checkSignedIn
 import com.example.instagramclone.main.navigateTo
 
 @Composable
@@ -38,6 +39,7 @@ fun LoginScreen(
     navController: NavController,
     vm: IgViewModel
 ) {
+    checkSignedIn(vm = vm, navController = navController)
 
     val focus = LocalFocusManager.current
 
@@ -96,6 +98,7 @@ fun LoginScreen(
             Button(
                 onClick = {
                     focus.clearFocus(force = true)
+                    vm.onLogin(emailState.value.text, passState.value.text)
                 },
                 modifier = Modifier.padding(8.dp)
             ) {

@@ -32,10 +32,13 @@ import com.example.instagramclone.DestinationScreen
 import com.example.instagramclone.IgViewModel
 import com.example.instagramclone.R
 import com.example.instagramclone.main.CommonProgressSpinner
+import com.example.instagramclone.main.checkSignedIn
 import com.example.instagramclone.main.navigateTo
 
 @Composable
 fun SignUpScreen(navController: NavController, vm: IgViewModel) {
+    checkSignedIn(vm = vm, navController = navController)
+
     val focus = LocalFocusManager.current
     Box(modifier = Modifier.fillMaxSize()) {
 

@@ -37,6 +37,10 @@ class IgViewModel @Inject constructor(
         email: String,
         pass: String
     ){
+        if (userName.isEmpty() or email.isEmpty() or pass.isEmpty()){
+            handleException(customMessage = "Please Enter all the fields")
+            return
+        }
         inProgress.value = true
         db.collection(USERS).whereEqualTo("userName", userName).get()
             .addOnSuccessListener { documents ->
@@ -58,6 +62,32 @@ class IgViewModel @Inject constructor(
             }
             .addOnFailureListener {
 
+            }
+    }
+
+    fun onLogin(email: String, pass:String){
+        if (email.isEmpty() or pass.isEmpty()){
+            handleException(customMessage = "Please enter all the details")
+            return
+        }
+        inProgress.value = false
+        auth.signInWithEmailAndPassword(email, pass)
+            .addOnCompleteListener { task->
+                if (task.isSuccessful){
+                    signedIn.value = true
+                    inProgress.value = false
+                    auth.currentUser?.uid?.let { uid->
+                        //handleException(customMessage = "Login Successful")
+                        getUserData(uid)
+                    }
+                }else{
+                    handleException(task.exception, "Login Failed")
+                    inProgress.value = false
+                }
+            }
+            .addOnFailureListener { exc ->
+                handleException(exc, "Login Failed")
+                inProgress.value = false
             }
     }
 
