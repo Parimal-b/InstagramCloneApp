@@ -1,6 +1,8 @@
 package com.example.instagramclone.main
 
 
+import android.os.Bundle
+import android.os.Parcelable
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,9 +29,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSavedStateRegistryOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.example.instagramclone.DestinationScreen
@@ -59,12 +63,23 @@ fun CommonProgressSpinner() {
     }
 }
 
-fun navigateTo(navController: NavController, dest: DestinationScreen) {
+data class NavParams(
+    val name: String,
+    val value: Parcelable
+)
+
+fun navigateTo(navController: NavController, dest: DestinationScreen, vararg params: NavParams) {
+    for (param in params) {
+        navController.currentBackStackEntry?.savedStateHandle?.set(param.name, param.value)
+    }
     navController.navigate(dest.route) {
-        popUpTo(dest.route)
+        popUpTo(dest.route) {
+            saveState = true
+        }
         launchSingleTop = true
     }
 }
+
 
 @Composable
 fun checkSignedIn(vm: IgViewModel, navController: NavController) {
