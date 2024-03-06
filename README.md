@@ -28,3 +28,11 @@ Utilized libraries like Coil and Hilt for efficient image loading and dependency
 Used Navigation through an Android app seamlessly with Jetpack Navigation.<br><br>
 Integrated Firebase for authentication and backend API functionality.<br><br>
 Constructed a complete Android project from scratch.<br><br>
+
+<h1>Screenshots</h1>
+<div>
+  <img src="https://github.com/Parimal-b/InstagramCloneApp/blob/master/InstaS1.png" height="520px" width="270px">
+<img src="https://github.com/Parimal-b/InstagramCloneApp/blob/master/InstaS2.png" height="520px" width="270px">
+<img src="https://github.com/Parimal-b/InstagramCloneApp/blob/master/InstaS3.png" height="520px" width="270px">
+</div>
+
