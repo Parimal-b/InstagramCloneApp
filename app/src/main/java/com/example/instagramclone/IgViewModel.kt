@@ -390,7 +390,7 @@ class IgViewModel @Inject constructor(
     fun getGeneralFeed() {
         postsFeedProgress.value = true
         val currentTime = System.currentTimeMillis()
-        val difference = 12 * 60 * 60 * 1000
+        val difference = 24 * 60 * 60 * 1000
         db.collection(POSTS)
             .whereGreaterThan("time", currentTime - difference)
             .get()
@@ -469,6 +469,10 @@ class IgViewModel @Inject constructor(
                 handleException(exc, "Cannot retrieve comments")
                 commentProgress.value = false
             }
+    }
+
+    fun clearComments() {
+        comments.value = emptyList()
     }
 
     private fun getFollowers(uid: String){

@@ -37,7 +37,6 @@ fun CommentScreen(navController: NavController, vm: IgViewModel, postId: String)
     var commentText by rememberSaveable {
         mutableStateOf("")
     }
-
     val focusManager = LocalFocusManager.current
 
     val comments = vm.comments.value

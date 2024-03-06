@@ -12,7 +12,8 @@ data class PostData(
     val postDescription: String ?= null,
     val time:Long ?= null,
     var likes: List<String> ?= null,
-    val searchTerms: List<String> ?= null
+    val searchTerms: List<String> ?= null,
+    val commentData: List<CommentData> ?= null
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),

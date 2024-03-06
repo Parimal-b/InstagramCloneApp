@@ -68,6 +68,7 @@ fun NewPostScreen(navController: NavController, vm: IgViewModel, encodedUri: Str
                 vm.onNewPost(Uri.parse(imageUri), description) {
                     navController.popBackStack()
                 }
+
             })
         }
 

@@ -105,7 +105,11 @@ fun SearchBar(searchTerm: String, onSearchChange: (String) -> Unit, onSearch: ()
             }) {
                 Icon(imageVector = Icons.Default.Search, contentDescription = null)
             }
+        },
+        label = {
+            Text(text = "Search Posts here")
         }
+
     )
 
 }
