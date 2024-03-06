@@ -46,6 +46,8 @@ class IgViewModel @Inject constructor(
 
     val followers = mutableStateOf(0)
 
+    val sortedUsersList = mutableStateOf<List<UserData>>(listOf())
+
     init {
         //auth.signOut()
         val currentUser = auth.currentUser
@@ -471,14 +473,19 @@ class IgViewModel @Inject constructor(
             }
     }
 
-    fun clearComments() {
-        comments.value = emptyList()
-    }
-
     private fun getFollowers(uid: String){
         db.collection(USERS).whereArrayContains("following", uid ?: "").get()
             .addOnSuccessListener {documents->
+                val users = mutableListOf<UserData>()
                 followers.value = documents.size()
+                documents.forEach { doc ->
+                    val user = doc.toObject<UserData>()
+                    users.add(user)
+                }
+                val sortedUsers = users.sortedByDescending { it.userName }
+                val sortedUsersImage = users.sortedByDescending { it.imageUrl }
+                sortedUsersList.value = sortedUsers
+                sortedUsersList.value = sortedUsersImage
 
             }
             .addOnFailureListener { exc->

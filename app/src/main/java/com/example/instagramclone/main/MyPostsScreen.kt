@@ -95,7 +95,10 @@ fun MyPostsScreen(navController: NavController, vm: IgViewModel) {
                     text = "$followers\nfollowers",
                     modifier = Modifier
                         .weight(1f)
-                        .align(Alignment.CenterVertically),
+                        .align(Alignment.CenterVertically)
+                        .clickable {
+                            navController.navigate(DestinationScreen.Followers.createRoute(userData?.userId!!))
+                        },
                     textAlign = TextAlign.Center
                 )
                 Text(
