@@ -24,6 +24,7 @@ import com.example.instagramclone.data.PostData
 import com.example.instagramclone.main.CommentScreen
 import com.example.instagramclone.main.FeedScreen
 import com.example.instagramclone.main.FollowersScreen
+import com.example.instagramclone.main.FollowingScreen
 import com.example.instagramclone.main.MyPostsScreen
 import com.example.instagramclone.main.NewPostScreen
 import com.example.instagramclone.main.NotificationMessage
@@ -69,6 +70,10 @@ sealed class DestinationScreen(val route: String) {
 
     object Followers : DestinationScreen("followers/{userId}"){
         fun createRoute(userId: String) = "followers/${userId}"
+    }
+
+    object Following: DestinationScreen("following/{userId}"){
+        fun createRoute(userId: String) = "following/${userId}"
     }
 }
 
@@ -125,6 +130,12 @@ fun InstagramApp() {
         composable(DestinationScreen.Followers.route){navBackStackEntry->
             val userId = navBackStackEntry.arguments?.getString("userId")
             userId?.let { FollowersScreen(navController = navController, vm = vm, userId = userId) }
+        }
+        composable(DestinationScreen.Following.route){navBackStackEntry ->
+            val userId = navBackStackEntry.arguments?.getString("userId")
+            userId?.let {
+                FollowingScreen(navController = navController, vm= vm, userId = userId)
+            }
         }
 
     }

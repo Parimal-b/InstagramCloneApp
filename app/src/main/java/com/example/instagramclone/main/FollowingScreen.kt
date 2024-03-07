@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,58 +18,54 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import com.example.instagramclone.DestinationScreen
 import com.example.instagramclone.IgViewModel
 import com.example.instagramclone.R
 import com.example.instagramclone.data.UserData
 
 @Composable
-fun FollowersScreen(navController: NavController, vm: IgViewModel, userId: String) {
-    val currentList = vm.sortedUsersList.value
+fun FollowingScreen(navController: NavController, vm: IgViewModel, userId: String) {
+    val following = vm.followingUserData.value
+
     Column {
-
-
         Text(
-            text = "Followers", modifier = Modifier.padding(16.dp),
+            text = "Following", modifier = Modifier.padding(16.dp),
             style = LocalTextStyle.current.copy(fontSize = 25.sp, fontFamily = FontFamily.SansSerif)
         )
-        if (currentList.isNotEmpty()) {
-            Box(
-                modifier = Modifier.background(color = Color.White),
 
-                ) {
-                LazyColumn {
-                    items(items = currentList) {
-                        FollowersList(it.userName!!, it.imageUrl ?: "")
+        Box(
+            modifier = Modifier.background(color = Color.White),
+
+            ) {
+            LazyColumn {
+                items(items = following) { item ->
+                    val name = item.userName
+
+                    if (name != null) {
+                        FollowingsList(userName = name, userImage = item.imageUrl ?: "")
                     }
                 }
-
             }
-        }else{
-            Text(
-                text = "You currently don't have any followers", modifier = Modifier.padding(16.dp),
-                style = LocalTextStyle.current.copy(fontSize = 16.sp, fontFamily = FontFamily.SansSerif)
-            )
+
+
         }
     }
 }
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun FollowersList(userName: String, userImage: String){
+fun FollowingsList(userName: String, userImage: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -89,10 +84,12 @@ fun FollowersList(userName: String, userImage: String){
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Follower Image (You can replace this with the actual follower image)
-                Card(shape = CircleShape,
+                Card(
+                    shape = CircleShape,
                     modifier = Modifier
                         .padding(8.dp)
-                        .size(32.dp)) {
+                        .size(32.dp)
+                ) {
                     val painter = rememberImagePainter(
                         data = userImage,
                         builder = {

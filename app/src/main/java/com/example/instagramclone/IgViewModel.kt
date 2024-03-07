@@ -31,6 +31,8 @@ class IgViewModel @Inject constructor(
     val signedIn = mutableStateOf(false)
     val inProgress = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
+    val followingData = mutableStateOf<UserData?>(null)
+
 
     val refreshPostsProgress = mutableStateOf(false)
     val posts = mutableStateOf<List<PostData>>(listOf())
@@ -40,6 +42,8 @@ class IgViewModel @Inject constructor(
 
     val postsFeed = mutableStateOf<List<PostData>>(listOf())
     val postsFeedProgress = mutableStateOf(false)
+
+    val followingUserData = mutableStateOf<MutableList<UserData>>(mutableListOf())
 
     val comments = mutableStateOf<List<CommentData>>(listOf())
     val commentProgress = mutableStateOf(false)
@@ -389,10 +393,12 @@ class IgViewModel @Inject constructor(
         }
     }
 
+
+
     fun getGeneralFeed() {
         postsFeedProgress.value = true
         val currentTime = System.currentTimeMillis()
-        val difference = 24 * 60 * 60 * 1000
+        val difference = 48 * 60 * 60 * 1000
         db.collection(POSTS)
             .whereGreaterThan("time", currentTime - difference)
             .get()
@@ -473,9 +479,9 @@ class IgViewModel @Inject constructor(
             }
     }
 
-    private fun getFollowers(uid: String){
+    private fun getFollowers(uid: String) {
         db.collection(USERS).whereArrayContains("following", uid ?: "").get()
-            .addOnSuccessListener {documents->
+            .addOnSuccessListener { documents ->
                 val users = mutableListOf<UserData>()
                 followers.value = documents.size()
                 documents.forEach { doc ->
@@ -483,13 +489,33 @@ class IgViewModel @Inject constructor(
                     users.add(user)
                 }
                 val sortedUsers = users.sortedByDescending { it.userName }
-                val sortedUsersImage = users.sortedByDescending { it.imageUrl }
                 sortedUsersList.value = sortedUsers
-                sortedUsersList.value = sortedUsersImage
 
             }
-            .addOnFailureListener { exc->
+            .addOnFailureListener { exc ->
                 handleException(exc, "Not able to retreive followers")
             }
     }
+
+    fun getFollowingData(uid: List<String>): List<UserData> {
+        // Initialize with default values or consider using a default constructor
+        followingUserData.value = mutableListOf()
+        for (item in uid) {
+            db.collection(USERS).document(item).get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val user = documentSnapshot.toObject<UserData>()
+                    if (user != null) {
+                        followingUserData.value.add(user)
+
+                    }
+                }
+
+            // Return the initialized userData
+
+        }
+        return followingUserData.value
+    }
+
+
+
 }

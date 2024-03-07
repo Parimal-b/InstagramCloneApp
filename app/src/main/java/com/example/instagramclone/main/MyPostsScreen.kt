@@ -45,6 +45,7 @@ data class PostRow(
     var post2: PostData? = null,
     var post3: PostData? = null
 ) {
+
     fun isFull() = post1 != null && post2 != null && post3 != null
     fun add(post: PostData) {
         if (post1 == null) {
@@ -59,6 +60,9 @@ data class PostRow(
 
 @Composable
 fun MyPostsScreen(navController: NavController, vm: IgViewModel) {
+
+    val followingUserList = vm.userData.value?.following
+
 
     val newPostImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -105,7 +109,13 @@ fun MyPostsScreen(navController: NavController, vm: IgViewModel) {
                     text = "${userData?.following?.size ?: 0}\nfollowing",
                     modifier = Modifier
                         .weight(1f)
-                        .align(Alignment.CenterVertically),
+                        .align(Alignment.CenterVertically)
+                        .clickable {
+                            navController.navigate(DestinationScreen.Following.createRoute(userData?.userId!!))
+                            if (followingUserList != null) {
+                                vm.getFollowingData(followingUserList)
+                            }
+                        },
                     textAlign = TextAlign.Center
                 )
             }
