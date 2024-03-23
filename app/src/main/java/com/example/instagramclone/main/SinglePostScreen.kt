@@ -126,7 +126,18 @@ fun SinglePostDisplay(
 
             }
 
-            Text(text = post.userName ?: "")
+            Text(
+                text = post.userName ?: "",
+                modifier = Modifier.clickable {
+                    val currentUser = vm.userData.value
+                    if (currentUser?.userId != post.userId){
+                        vm.getUserProfile(post.userId!!)
+                        navController.navigate(DestinationScreen.userPosts.createRoute(post.userId))
+                    }else{
+                        navController.navigate(DestinationScreen.MyPosts.route)
+                    }
+                }
+            )
             Text(text = ".", modifier = Modifier.padding(8.dp))
 
             if (userData?.userId == post.userId) {

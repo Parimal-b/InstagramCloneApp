@@ -30,6 +30,7 @@ import com.example.instagramclone.main.NewPostScreen
 import com.example.instagramclone.main.NotificationMessage
 import com.example.instagramclone.main.SearchScreen
 import com.example.instagramclone.main.SinglePostScreen
+import com.example.instagramclone.main.UserPostsScreen
 
 import com.example.instagramclone.ui.theme.InstagramCloneTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -74,6 +75,10 @@ sealed class DestinationScreen(val route: String) {
 
     object Following: DestinationScreen("following/{userId}"){
         fun createRoute(userId: String) = "following/${userId}"
+    }
+
+    object userPosts: DestinationScreen("userPosts/{userId}"){
+        fun createRoute(userId: String) = "userPosts/${userId}"
     }
 }
 
@@ -135,6 +140,13 @@ fun InstagramApp() {
             val userId = navBackStackEntry.arguments?.getString("userId")
             userId?.let {
                 FollowingScreen(navController = navController, vm= vm, userId = userId)
+            }
+        }
+
+        composable(DestinationScreen.userPosts.route){navBackStackEntry ->
+            val userId = navBackStackEntry.arguments?.getString("userId")
+            userId?.let {
+                UserPostsScreen(navController = navController, vm= vm, userId = userId)
             }
         }
 

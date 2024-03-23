@@ -65,7 +65,7 @@ fun NewPostScreen(navController: NavController, vm: IgViewModel, encodedUri: Str
                 focusManager.clearFocus()
 
                 //Call from view model
-                vm.onNewPost(Uri.parse(imageUri), description) {
+                vm.onNewPost(Uri.parse(imageUri), description, vm.userData.value?.userName!!) {
                     navController.popBackStack()
                 }
 

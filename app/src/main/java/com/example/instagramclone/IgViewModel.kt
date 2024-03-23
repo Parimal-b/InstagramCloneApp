@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,13 +32,17 @@ class IgViewModel @Inject constructor(
     val signedIn = mutableStateOf(false)
     val inProgress = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
-    val followingData = mutableStateOf<UserData?>(null)
 
+    val userProfile = mutableStateOf<UserData?>(null)
 
     val refreshPostsProgress = mutableStateOf(false)
     val posts = mutableStateOf<List<PostData>>(listOf())
+    val userPosts = mutableStateOf<List<PostData>>(listOf())
 
     val searchedPosts = mutableStateOf<List<PostData>>(listOf())
+    val searchedPeopleByPost = mutableStateOf<List<PostData>>(listOf())
+    val searchedPostsByUser = mutableStateOf<List<PostData>>(listOf())
+    val searchedPeople = mutableStateOf<List<PostData>>(listOf())
     val searchedPostsProgress = mutableStateOf(false)
 
     val postsFeed = mutableStateOf<List<PostData>>(listOf())
@@ -49,8 +54,12 @@ class IgViewModel @Inject constructor(
     val commentProgress = mutableStateOf(false)
 
     val followers = mutableStateOf(0)
+    val userFollowers = mutableStateOf(0)
 
     val sortedUsersList = mutableStateOf<List<UserData>>(listOf())
+
+    var userFromPost = UserData()
+
 
     init {
         //auth.signOut()
@@ -180,6 +189,25 @@ class IgViewModel @Inject constructor(
             }
     }
 
+    fun getUserProfile(uid: String){
+        inProgress.value = true
+        db.collection(USERS).document(uid).get()
+            .addOnSuccessListener {
+                val user = it.toObject<UserData>()
+                userProfile.value = user
+                inProgress.value = false
+                getUserPosts(uid)
+                user?.userId?.let { it1 -> getUserFollowers(it1) }
+                //refreshPosts()
+                //getPersonalizedFeed()
+                //user?.userId?.let { it1 -> getFollowers(it1) }
+                //popUpNotification.value = Event("UserData retrieved successfully")
+            }
+            .addOnFailureListener { exc ->
+                handleException(exc, "Cannot Retrieve UserData")
+            }
+    }
+
     fun handleException(exception: Exception? = null, customMessage: String = "") {
         exception?.printStackTrace()
         val errorMsg = exception?.localizedMessage ?: ""
@@ -248,19 +276,22 @@ class IgViewModel @Inject constructor(
         auth.signOut()
         signedIn.value = false
         userData.value = null
+        userProfile.value = null
         popUpNotification.value = Event("Logged Out")
         searchedPosts.value = listOf()
+        userPosts.value = listOf()
+        searchedPeople.value = listOf()
         postsFeed.value = listOf()
         comments.value = listOf()
     }
 
-    fun onNewPost(uri: Uri, description: String, onPostSuccess: () -> Unit) {
+    fun onNewPost(uri: Uri, description: String, userId: String, onPostSuccess: () -> Unit) {
         uploadImage(uri) {
-            onCreatePost(it, description, onPostSuccess)
+            onCreatePost(it, description, userId, onPostSuccess)
         }
     }
 
-    private fun onCreatePost(imageUri: Uri, description: String, onPostSuccess: () -> Unit) {
+    private fun onCreatePost(imageUri: Uri, description: String, userId: String, onPostSuccess: () -> Unit) {
         inProgress.value = true
         val currentUid = auth.currentUser?.uid
         val currentUsername = userData.value?.userName
@@ -270,10 +301,16 @@ class IgViewModel @Inject constructor(
             val postUuid = UUID.randomUUID().toString()
 
             val fillerWords = listOf("the", "be", "to", "is", "of", "and", "or", "a", "in", "it")
-            val searchTerms = description
+            var searchTerms = description
                 .split(" ", ".", ",", "?", "!", "#")
                 .map { it.lowercase() }
                 .filter { it.isNotEmpty() and !fillerWords.contains(it) }
+
+            val searchPeople = userId.split(" ", ".", ",", "?", "!", "#")
+                .map { it.lowercase() }
+                .filter { it.isNotEmpty() and !fillerWords.contains(it) }
+
+            searchTerms = searchTerms + searchPeople
 
             val post = PostData(
                 postId = postUuid,
@@ -284,7 +321,7 @@ class IgViewModel @Inject constructor(
                 postDescription = description,
                 time = System.currentTimeMillis(),
                 likes = listOf<String>(),
-                searchTerms = searchTerms
+                searchTerms = searchTerms,
             )
 
             db.collection(POSTS).document(postUuid).set(post)
@@ -325,6 +362,20 @@ class IgViewModel @Inject constructor(
         }
     }
 
+    private fun getUserPosts(userId: String){
+        refreshPostsProgress.value = true
+        db.collection(POSTS).whereEqualTo("userId", userId).get()
+            .addOnSuccessListener { documents ->
+                convertPosts(documents, userPosts)
+                refreshPostsProgress.value = false
+            }
+            .addOnFailureListener { exc ->
+                handleException(exc, "Cannot fetch the posts")
+                refreshPostsProgress.value = false
+            }
+
+    }
+
     private fun convertPosts(documents: QuerySnapshot, outState: MutableState<List<PostData>>) {
         val newPosts = mutableListOf<PostData>()
         documents.forEach { doc ->
@@ -332,6 +383,16 @@ class IgViewModel @Inject constructor(
             newPosts.add(post)
         }
         val sortedPosts = newPosts.sortedByDescending { it.time }
+        outState.value = sortedPosts
+    }
+
+    private fun convertPeople(documents: QuerySnapshot, outState: MutableState<List<UserData>>) {
+        val newPeople = mutableListOf<UserData>()
+        documents.forEach { doc ->
+            val post = doc.toObject<UserData>()
+            newPeople.add(post)
+        }
+        val sortedPosts = newPeople.sortedByDescending { it.userName}
         outState.value = sortedPosts
     }
 
@@ -343,6 +404,20 @@ class IgViewModel @Inject constructor(
                 .get()
                 .addOnSuccessListener {
                     convertPosts(it, searchedPosts)
+                    convertPosts(it, searchedPeopleByPost)
+                    searchedPostsProgress.value = false
+                }
+                .addOnFailureListener { exc ->
+                    handleException(exc, "Cannot search posts")
+                    searchedPostsProgress.value = false
+                }
+
+            db.collection(POSTS)
+                .whereEqualTo("userName", searchTerm.trim().lowercase())
+                .get()
+                .addOnSuccessListener {
+                    convertPosts(it, searchedPeople)
+                    convertPosts(it, searchedPostsByUser)
                     searchedPostsProgress.value = false
                 }
                 .addOnFailureListener { exc ->
@@ -402,6 +477,7 @@ class IgViewModel @Inject constructor(
         db.collection(POSTS)
             .whereGreaterThan("time", currentTime - difference)
             .get()
+
             .addOnSuccessListener {
                 convertPosts(
                     documents = it,
@@ -484,6 +560,28 @@ class IgViewModel @Inject constructor(
             .addOnSuccessListener { documents ->
                 val users = mutableListOf<UserData>()
                 followers.value = documents.size()
+                documents.forEach { doc ->
+                    val user = doc.toObject<UserData>()
+                    users.add(user)
+                }
+                val sortedUsers = users.sortedByDescending { it.userName }
+                sortedUsersList.value = sortedUsers
+
+            }
+            .addOnFailureListener { exc ->
+                handleException(exc, "Not able to retreive followers")
+            }
+    }
+
+    fun getCurrentFollowers(uid:String){
+        getFollowers(uid)
+    }
+
+    private fun getUserFollowers(uid: String) {
+        db.collection(USERS).whereArrayContains("following", uid ?: "").get()
+            .addOnSuccessListener { documents ->
+                val users = mutableListOf<UserData>()
+                userFollowers.value = documents.size()
                 documents.forEach { doc ->
                     val user = doc.toObject<UserData>()
                     users.add(user)

@@ -2,6 +2,7 @@ package com.example.instagramclone.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,14 +55,14 @@ fun FollowersScreen(navController: NavController, vm: IgViewModel, userId: Strin
                 ) {
                 LazyColumn {
                     items(items = currentList) {
-                        FollowersList(it.userName!!, it.imageUrl ?: "")
+                        FollowersList(it.userName!!, it.imageUrl ?: "", vm, navController, it.userId!!)
                     }
                 }
 
             }
         }else{
             Text(
-                text = "You currently don't have any followers", modifier = Modifier.padding(16.dp),
+                text = "No Followers", modifier = Modifier.padding(16.dp),
                 style = LocalTextStyle.current.copy(fontSize = 16.sp, fontFamily = FontFamily.SansSerif)
             )
         }
@@ -70,7 +71,7 @@ fun FollowersScreen(navController: NavController, vm: IgViewModel, userId: Strin
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun FollowersList(userName: String, userImage: String){
+fun FollowersList(userName: String, userImage: String, vm: IgViewModel, navController: NavController, folUserId:String){
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -85,7 +86,16 @@ fun FollowersList(userName: String, userImage: String){
         ) {
             Row(
                 modifier = Modifier
-                    .padding(8.dp),
+                    .padding(8.dp)
+                    .clickable {
+                        val currentUser = vm.userData.value
+                        if (currentUser?.userId != folUserId){
+                            vm.getUserProfile(folUserId)
+                            navController.navigate(DestinationScreen.userPosts.createRoute(folUserId))
+                        }else{
+                            navController.navigate(DestinationScreen.MyPosts.route)
+                        }
+                    },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Follower Image (You can replace this with the actual follower image)

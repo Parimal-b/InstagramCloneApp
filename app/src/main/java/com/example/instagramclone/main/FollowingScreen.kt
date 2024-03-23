@@ -2,6 +2,7 @@ package com.example.instagramclone.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
+import com.example.instagramclone.DestinationScreen
 import com.example.instagramclone.IgViewModel
 import com.example.instagramclone.R
 import com.example.instagramclone.data.UserData
@@ -53,7 +55,7 @@ fun FollowingScreen(navController: NavController, vm: IgViewModel, userId: Strin
                     val name = item.userName
 
                     if (name != null) {
-                        FollowingsList(userName = name, userImage = item.imageUrl ?: "")
+                        FollowingsList(userName = name, userImage = item.imageUrl ?: "", searchedUserId = item.userId!!, vm = vm, navController = navController)
                     }
                 }
             }
@@ -65,7 +67,7 @@ fun FollowingScreen(navController: NavController, vm: IgViewModel, userId: Strin
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun FollowingsList(userName: String, userImage: String) {
+fun FollowingsList(userName: String, userImage: String, searchedUserId: String, vm: IgViewModel, navController: NavController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -80,7 +82,16 @@ fun FollowingsList(userName: String, userImage: String) {
         ) {
             Row(
                 modifier = Modifier
-                    .padding(8.dp),
+                    .padding(8.dp)
+                    .clickable {
+                        val currentUser = vm.userData.value
+                        if (currentUser?.userId != searchedUserId){
+                            vm.getUserProfile(searchedUserId)
+                            navController.navigate(DestinationScreen.userPosts.createRoute(searchedUserId))
+                        }else{
+                            navController.navigate(DestinationScreen.MyPosts.route)
+                        }
+                    },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Follower Image (You can replace this with the actual follower image)

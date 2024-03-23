@@ -6,7 +6,7 @@ data class UserData(
     var userName: String? = null,
     var imageUrl: String? = null,
     var bio: String? = null,
-    var following: List<String>? = null
+    var following: List<String>? = null,
 ) {
     fun toMap() = mapOf(
         "userId" to userId,
@@ -14,6 +14,6 @@ data class UserData(
         "userName" to userName,
         "imageUrl" to imageUrl,
         "bio" to bio,
-        "following" to following
+        "following" to following,
     )
 }
