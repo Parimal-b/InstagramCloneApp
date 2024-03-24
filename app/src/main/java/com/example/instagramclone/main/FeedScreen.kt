@@ -1,5 +1,6 @@
 package com.example.instagramclone.main
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,8 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,17 +35,19 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.instagramclone.DestinationScreen
 import com.example.instagramclone.IgViewModel
 import com.example.instagramclone.R
-import com.example.instagramclone.data.CommentData
 import com.example.instagramclone.data.PostData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.LinearOutSlowInEasing
 
 @Composable
 fun FeedScreen(navController: NavController, vm: IgViewModel) {
@@ -55,6 +56,31 @@ fun FeedScreen(navController: NavController, vm: IgViewModel) {
     val userData = vm.userData.value
     val personalizedFeed = vm.postsFeed.value
     val personalizedFeedLoading = vm.postsFeedProgress.value
+
+
+    val helloTexts = listOf(
+        "Hello",          // English
+        "Bonjour",        // French
+        "Hola",           // Spanish
+        "Ciao",           // Italian
+        "Hallo",          // German
+        "Olá",            // Portuguese
+        "こんにちは",    // Japanese (Konnichiwa)
+        "नमस्ते",        // Hindi (Namaste)
+        "السلام",         // Arabic (Salam)
+        "你好"            // Chinese (Ni Hao)
+        // Add more greetings as needed
+    )
+
+
+    val currentHelloIndex = remember { mutableStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(1500L) // Wait for 1 second
+            currentHelloIndex.value = (currentHelloIndex.value + 1) % helloTexts.size
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -65,9 +91,32 @@ fun FeedScreen(navController: NavController, vm: IgViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .background(Color.LightGray)
+                .background(Color.White)
+
         ) {
             userImageCard(userImage = userData?.imageUrl)
+            Column {
+                Column {
+                    Crossfade(
+                        targetState = helloTexts[currentHelloIndex.value],
+                        animationSpec = tween(durationMillis = 1000, easing = LinearOutSlowInEasing)
+                    ) { targetText ->
+                        Text(
+                            text = "${targetText},",
+                            modifier = Modifier
+                                .padding(top = 12.dp, start = 5.dp)
+                                .width(200.dp)
+                                .height(20.dp),
+                            color = Color.Red
+                        )
+                    }
+
+                    Text(
+                        text = "${userData?.userName}", modifier = Modifier
+                            .padding(top = 8.dp, start = 5.dp),
+                    )
+                }
+            }
         }
         PostsList(
             posts = personalizedFeed,
@@ -211,21 +260,21 @@ fun Post(
                     LikeAnimation(false)
                 }
             }
-           likeCommentItem(
-               post = post,
-               vm = vm,
-               onCommentClick = {
-                   vm.getComments(postId = post.postId)
-                   navController.navigate(DestinationScreen.CommentScreen.createRoute(post.postId!!))
-               }
-           )
+            likeCommentItem(
+                post = post,
+                vm = vm,
+                onCommentClick = {
+                    vm.getComments(postId = post.postId)
+                    navController.navigate(DestinationScreen.CommentScreen.createRoute(post.postId!!))
+                }
+            )
         }
     }
 }
 
 
 @Composable
-fun likeCommentItem( post: PostData, vm: IgViewModel, onCommentClick: () -> Unit) {
+fun likeCommentItem(post: PostData, vm: IgViewModel, onCommentClick: () -> Unit) {
 
     val userData = vm.userData.value
     val commentData = vm.comments.value
@@ -268,9 +317,9 @@ fun likeCommentItem( post: PostData, vm: IgViewModel, onCommentClick: () -> Unit
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        Text(text = post.userName?: "", fontWeight = FontWeight.Bold, color = Color.Gray)
+        Text(text = post.userName ?: "", fontWeight = FontWeight.Bold, color = Color.Gray)
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = post.postDescription?: "", fontWeight = FontWeight.Bold)
+        Text(text = post.postDescription ?: "", fontWeight = FontWeight.Bold)
     }
 }
 
