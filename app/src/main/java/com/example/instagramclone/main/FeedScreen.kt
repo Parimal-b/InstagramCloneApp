@@ -48,6 +48,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 
 @Composable
 fun FeedScreen(navController: NavController, vm: IgViewModel) {
@@ -68,9 +73,21 @@ fun FeedScreen(navController: NavController, vm: IgViewModel) {
         "こんにちは",    // Japanese (Konnichiwa)
         "नमस्ते",        // Hindi (Namaste)
         "السلام",         // Arabic (Salam)
-        "你好"            // Chinese (Ni Hao)
+        "你好",            // Chinese (Ni Hao)
+        "Selamat pagi",   // Indonesian
+        "Zdravstvuyte",   // Russian (Здравствуйте)
+        "Merhaba",        // Turkish
+        "Sawubona",       // Zulu
+        "Szia",           // Hungarian
+        "Aloha",          // Hawaiian
+        "Shalom",         // Hebrew (שָׁלוֹם)
+        "Kamusta",        // Filipino
+        "Salam",          // Persian (سلام)
+        "Sveiki",         // Lithuanian
         // Add more greetings as needed
     )
+
+
 
 
     val currentHelloIndex = remember { mutableStateOf(0) }
@@ -107,16 +124,30 @@ fun FeedScreen(navController: NavController, vm: IgViewModel) {
                                 .padding(top = 12.dp, start = 5.dp)
                                 .width(200.dp)
                                 .height(20.dp),
-                            color = Color.Red
+                            color = Color.Red,
+                            style = TextStyle(fontWeight = FontWeight.Bold)
                         )
                     }
 
                     Text(
                         text = "${userData?.userName}", modifier = Modifier
                             .padding(top = 8.dp, start = 5.dp),
+                        style = TextStyle(fontWeight = FontWeight.Bold)
                     )
                 }
+
+
             }
+
+
+            Image(
+                painter = painterResource(id = R.drawable.ig_logo),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(70.dp)
+                    .padding(end = 0.dp)
+                    .align(Alignment.Top)
+            )
         }
         PostsList(
             posts = personalizedFeed,
@@ -144,25 +175,36 @@ fun PostsList(
     currentUserId: String
 ) {
     Box(
-        modifier = modifier.background(color = Color.White),
+        modifier = modifier.background(color = Color.Transparent),
 
         ) {
         LazyColumn {
             items(items = posts) {
-                Post(
-                    navController = navController,
-                    post = it,
-                    currentUserId = currentUserId,
-                    vm = vm
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .background(color = Color(android.graphics.Color.parseColor("#e2e8f0")))
+                        .padding(12.dp)
+                        .shadow(4.dp),
+                    shape = MaterialTheme.shapes.medium
                 ) {
-                    navigateTo(
-                        navController,
-                        DestinationScreen.SinglePost,
-                        NavParams(
-                            "post", it
+                    Post(
+                        navController = navController,
+                        post = it,
+                        currentUserId = currentUserId,
+                        vm = vm
+                    ) {
+                        navigateTo(
+                            navController,
+                            DestinationScreen.SinglePost,
+                            NavParams(
+                                "post", it
+                            )
                         )
-                    )
+                    }
                 }
+
             }
         }
         if (loading) {
@@ -192,7 +234,6 @@ fun Post(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(top = 8.dp, bottom = 8.dp)
             .background(color = Color.White)
     ) {
         Column(
