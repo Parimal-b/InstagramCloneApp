@@ -100,7 +100,8 @@ class IgViewModel @Inject constructor(
                 }
             }
             .addOnFailureListener {
-
+                handleException(it, it.message.toString())
+                inProgress.value = false
             }
     }
 
