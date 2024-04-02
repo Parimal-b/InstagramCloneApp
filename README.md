@@ -30,9 +30,12 @@ Integrated Firebase for authentication and backend API functionality.<br><br>
 Constructed a complete Android project from scratch.<br><br>
 
 <h1>Screenshots</h1>
+
 <div>
-  <img src="https://github.com/Parimal-b/InstagramCloneApp/blob/master/InstaS1.png" height="520px" width="270px">
-<img src="https://github.com/Parimal-b/InstagramCloneApp/blob/master/InstaS2.png" height="520px" width="270px">
-<img src="https://github.com/Parimal-b/InstagramCloneApp/blob/master/InstaS3.png" height="520px" width="270px">
+  
+  <img src="https://github.com/Parimal-b/InstagramCloneApp/blob/master/Home%20Page.png" height="500px" width="230px">
+<img src="https://github.com/Parimal-b/InstagramCloneApp/blob/master/InstaS2.png" height="500px" width="230px">
+<img src="https://github.com/Parimal-b/InstagramCloneApp/blob/master/InstaS3.png" height="500px" width="230px">
+  <img src="https://github.com/Parimal-b/InstagramCloneApp/blob/master/Advance%20Search.png" height="500px" width="230px">
 </div>
 
