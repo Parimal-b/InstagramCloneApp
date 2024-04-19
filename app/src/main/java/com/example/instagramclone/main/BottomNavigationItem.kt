@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,7 +21,9 @@ import com.example.instagramclone.R
 enum class BottomNavigationItem(val icon: Int, val navDestination: DestinationScreen) {
     FEED(R.drawable.ic_home, DestinationScreen.Feed),
     SEARCH(R.drawable.ic_search, DestinationScreen.Search),
-    POSTS(R.drawable.ic_person, DestinationScreen.MyPosts)
+    MESSAGES(R.drawable.ic_chat, DestinationScreen.ChatListScreen),
+    POSTS(R.drawable.ic_person, DestinationScreen.MyPosts),
+
 }
 
 @Composable

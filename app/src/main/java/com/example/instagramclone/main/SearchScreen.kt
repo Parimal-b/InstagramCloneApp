@@ -6,29 +6,23 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,7 +41,7 @@ import com.example.instagramclone.IgViewModel
 fun SearchScreen(navController: NavController, vm: IgViewModel) {
 
     val searchedPostsLoading = vm.searchedPostsProgress.value
-    val searchedPosts = (vm.searchedPosts.value + vm.searchedPostsByUser.value).distinctBy { it.postImage }
+    val searchedPosts = (vm.searchedPosts.value + vm.searchedPostsByUser.value).distinctBy { it.postDescription }
     val searchedPeople = (vm.searchedPeople.value + vm.searchedPeopleByPost.value).distinctBy { it.userId }
     var searchTerm by rememberSaveable {
         mutableStateOf("")

@@ -2,9 +2,7 @@ package com.example.instagramclone.auth
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,10 +18,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 
 
@@ -41,7 +37,6 @@ import com.example.instagramclone.DestinationScreen
 import com.example.instagramclone.IgViewModel
 import com.example.instagramclone.main.CommonDivider
 import com.example.instagramclone.main.CommonProgressSpinner
-import com.example.instagramclone.main.ProfileImage
 import com.example.instagramclone.main.commonImage
 import com.example.instagramclone.main.navigateTo
 

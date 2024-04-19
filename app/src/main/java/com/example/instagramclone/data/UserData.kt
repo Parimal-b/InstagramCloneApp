@@ -17,3 +17,21 @@ data class UserData(
         "following" to following,
     )
 }
+
+data class ChatData(
+    val chatId: String ?= null,
+    val user1: ChatUser = ChatUser(),
+    val user2: ChatUser = ChatUser()
+)
+
+data class ChatUser(
+    val userId: String ?= null,
+    val userName: String ?= null,
+    val imageUrl: String ?= null
+)
+
+data class Message(
+    val sentBy: String ?= "",
+    val message: String ?= "",
+    val timestamp: String ?= ""
+)

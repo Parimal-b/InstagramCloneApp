@@ -1,5 +1,9 @@
 package com.example.instagramclone
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,10 +12,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.os.BundleCompat.getParcelable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -21,6 +31,7 @@ import com.example.instagramclone.auth.LoginScreen
 import com.example.instagramclone.auth.ProfileScreen
 import com.example.instagramclone.auth.SignUpScreen
 import com.example.instagramclone.data.PostData
+import com.example.instagramclone.main.ChatListScreen
 import com.example.instagramclone.main.CommentScreen
 import com.example.instagramclone.main.FeedScreen
 import com.example.instagramclone.main.FollowersScreen
@@ -29,6 +40,7 @@ import com.example.instagramclone.main.MyPostsScreen
 import com.example.instagramclone.main.NewPostScreen
 import com.example.instagramclone.main.NotificationMessage
 import com.example.instagramclone.main.SearchScreen
+import com.example.instagramclone.main.SingleChatScreen
 import com.example.instagramclone.main.SinglePostScreen
 import com.example.instagramclone.main.UserPostsScreen
 
@@ -37,6 +49,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -62,6 +75,11 @@ sealed class DestinationScreen(val route: String) {
     object Profile : DestinationScreen("profile")
     object NewPost : DestinationScreen("newpost/{imageUri}") {
         fun createRoute(uri: String) = "newpost/$uri"
+    }
+    object ChatListScreen : DestinationScreen("chatscreen")
+
+    object SingleChat : DestinationScreen("chat/{chatId}"){
+        fun createRoute(chatId: String) = "chat/${chatId}"
     }
 
     object SinglePost : DestinationScreen("singlepost")
@@ -94,6 +112,11 @@ fun InstagramApp() {
         composable(DestinationScreen.SignUp.route) {
             SignUpScreen(navController = navController, vm = vm)
         }
+
+        composable(DestinationScreen.ChatListScreen.route) {
+            ChatListScreen(navController = navController, vm = vm)
+        }
+
         composable(DestinationScreen.Login.route) {
             LoginScreen(navController = navController, vm = vm)
         }
@@ -132,6 +155,16 @@ fun InstagramApp() {
             val postId = navBackStackEntry.arguments?.getString("postId")
             postId?.let { CommentScreen(navController = navController, vm = vm, postId = it) }
         }
+
+        composable(DestinationScreen.SingleChat.route){
+            val chatId = it.arguments?.getString("chatId")
+            chatId?.let {
+                SingleChatScreen(navController = navController, vm = vm, chatId = it)
+            }
+
+
+        }
+
         composable(DestinationScreen.Followers.route){navBackStackEntry->
             val userId = navBackStackEntry.arguments?.getString("userId")
             userId?.let { FollowersScreen(navController = navController, vm = vm, userId = userId) }

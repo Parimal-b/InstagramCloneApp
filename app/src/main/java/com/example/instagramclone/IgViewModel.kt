@@ -4,24 +4,32 @@ import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.instagramclone.data.ChatData
+import com.example.instagramclone.data.ChatUser
 import com.example.instagramclone.data.CommentData
 import com.example.instagramclone.data.Event
+import com.example.instagramclone.data.Message
 import com.example.instagramclone.data.PostData
 import com.example.instagramclone.data.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.toObject
+import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Calendar
 import java.util.UUID
 import javax.inject.Inject
 
 const val USERS = "users"
 const val POSTS = "posts"
 const val COMMENTS = "comments"
+const val CHATS = "chat"
+const val MESSAGES = "messages"
 
 @HiltViewModel
 class IgViewModel @Inject constructor(
@@ -59,6 +67,14 @@ class IgViewModel @Inject constructor(
     val sortedUsersList = mutableStateOf<List<UserData>>(listOf())
 
     var userFromPost = UserData()
+
+    //Chat functionality
+    val chats = mutableStateOf<List<ChatData>>(listOf())
+    val inProgressChats = mutableStateOf(false)
+
+    val chatMessages = mutableStateOf<List<Message>>(listOf())
+    val inProgressChatMessages = mutableStateOf(false)
+    var currentChatMessagesListener: ListenerRegistration ?= null
 
 
     init {
@@ -173,7 +189,7 @@ class IgViewModel @Inject constructor(
         }
     }
 
-    private fun getUserData(uid: String) {
+    fun getUserData(uid: String) {
         inProgress.value = true
         db.collection(USERS).document(uid).get()
             .addOnSuccessListener {
@@ -183,6 +199,7 @@ class IgViewModel @Inject constructor(
                 refreshPosts()
                 getPersonalizedFeed()
                 user?.userId?.let { it1 -> getFollowers(it1) }
+                populateChats()
                 //popUpNotification.value = Event("UserData retrieved successfully")
             }
             .addOnFailureListener { exc ->
@@ -190,7 +207,7 @@ class IgViewModel @Inject constructor(
             }
     }
 
-    fun getUserProfile(uid: String){
+    fun getUserProfile(uid: String) {
         inProgress.value = true
         db.collection(USERS).document(uid).get()
             .addOnSuccessListener {
@@ -199,10 +216,7 @@ class IgViewModel @Inject constructor(
                 inProgress.value = false
                 getUserPosts(uid)
                 user?.userId?.let { it1 -> getUserFollowers(it1) }
-                //refreshPosts()
-                //getPersonalizedFeed()
-                //user?.userId?.let { it1 -> getFollowers(it1) }
-                //popUpNotification.value = Event("UserData retrieved successfully")
+
             }
             .addOnFailureListener { exc ->
                 handleException(exc, "Cannot Retrieve UserData")
@@ -284,6 +298,7 @@ class IgViewModel @Inject constructor(
         searchedPeople.value = listOf()
         postsFeed.value = listOf()
         comments.value = listOf()
+        chats.value = listOf()
     }
 
     fun onNewPost(uri: Uri, description: String, userId: String, onPostSuccess: () -> Unit) {
@@ -292,7 +307,12 @@ class IgViewModel @Inject constructor(
         }
     }
 
-    private fun onCreatePost(imageUri: Uri, description: String, userId: String, onPostSuccess: () -> Unit) {
+    private fun onCreatePost(
+        imageUri: Uri,
+        description: String,
+        userId: String,
+        onPostSuccess: () -> Unit
+    ) {
         inProgress.value = true
         val currentUid = auth.currentUser?.uid
         val currentUsername = userData.value?.userName
@@ -363,7 +383,7 @@ class IgViewModel @Inject constructor(
         }
     }
 
-    private fun getUserPosts(userId: String){
+    private fun getUserPosts(userId: String) {
         refreshPostsProgress.value = true
         db.collection(POSTS).whereEqualTo("userId", userId).get()
             .addOnSuccessListener { documents ->
@@ -393,7 +413,7 @@ class IgViewModel @Inject constructor(
             val post = doc.toObject<UserData>()
             newPeople.add(post)
         }
-        val sortedPosts = newPeople.sortedByDescending { it.userName}
+        val sortedPosts = newPeople.sortedByDescending { it.userName }
         outState.value = sortedPosts
     }
 
@@ -468,7 +488,6 @@ class IgViewModel @Inject constructor(
             getGeneralFeed()
         }
     }
-
 
 
     fun getGeneralFeed() {
@@ -574,7 +593,7 @@ class IgViewModel @Inject constructor(
             }
     }
 
-    fun getCurrentFollowers(uid:String){
+    fun getCurrentFollowers(uid: String) {
         getFollowers(uid)
     }
 
@@ -616,5 +635,116 @@ class IgViewModel @Inject constructor(
     }
 
 
+    //Chat functions
+    fun onAddChat(userName: String) {
+        if (userName.isEmpty()) {
+            handleException(customMessage = "Field should not be empty")
+        } else {
+            db.collection(CHATS)
+                .where(
+                    Filter.or(
+                        Filter.and(
+                            Filter.equalTo("user1.name", userName),
+                            Filter.equalTo("user2.name", userData.value?.userName)
+                        ),
 
+                        Filter.and(
+                            Filter.equalTo("user1.name", userData.value?.userName),
+                            Filter.equalTo("user2.name", userName)
+                        )
+                    )
+                )
+                .get()
+                .addOnSuccessListener {
+                    if (it.isEmpty) {
+                        db.collection(USERS).whereEqualTo("userName", userName)
+                            .get()
+                            .addOnSuccessListener {
+                                if (it.isEmpty) {
+                                    handleException(customMessage = "Cannot retrive the user $userName")
+                                } else {
+                                    val chatPartner = it.toObjects<UserData>()[0]
+                                    val id = db.collection(CHATS).document().id
+                                    val chat = ChatData(
+                                        id,
+                                        ChatUser(
+                                            userData.value?.userId,
+                                            userData.value?.userName,
+                                            userData.value?.imageUrl
+                                        ),
+
+                                        ChatUser(
+                                            chatPartner.userId,
+                                            chatPartner.userName,
+                                            chatPartner.imageUrl
+                                        )
+                                    )
+                                    db.collection(CHATS).document(id).set(chat)
+                                }
+                            }
+                            .addOnFailureListener {
+                                handleException(it)
+                            }
+                    } else {
+                        handleException(customMessage = "Chat Already exist")
+                    }
+                }
+        }
+    }
+
+    private fun populateChats() {
+        inProgressChats.value = true
+        db.collection(CHATS).where(
+            Filter.or(
+                Filter.equalTo("user1.userId", userData.value?.userId),
+                Filter.equalTo("user2.userId", userData.value?.userId)
+            )
+        )
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    handleException(error)
+                }
+                if (value != null) {
+                    chats.value = value.documents.mapNotNull { it.toObject<ChatData>() }
+                    inProgressChats.value = false
+                }
+            }
+    }
+
+    fun onSendReply(chatId: String, message: String) {
+        val time = Calendar.getInstance().time.toString()
+        val message = Message(
+            userData.value?.userId, message, time
+        )
+
+        db.collection(CHATS)
+            .document(chatId)
+            .collection(MESSAGES)
+            .document()
+            .set(message)
+    }
+
+    fun populateChat(chatId: String){
+        inProgressChatMessages.value = true
+        currentChatMessagesListener = db.collection(CHATS)
+            .document(chatId)
+            .collection(MESSAGES)
+            .addSnapshotListener { value, error ->
+                if (error != null){
+                    handleException(error)
+                }
+                if (value != null){
+                    chatMessages.value = value.documents
+                        .mapNotNull { it.toObject<Message>() }
+                        .sortedBy { it.timestamp }
+
+                }
+                inProgressChatMessages.value = false
+            }
+    }
+
+    fun depopulateChat(){
+        chatMessages.value = listOf()
+        currentChatMessagesListener = null
+    }
 }
