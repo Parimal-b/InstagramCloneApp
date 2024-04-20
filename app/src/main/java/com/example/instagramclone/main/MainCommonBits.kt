@@ -12,12 +12,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
@@ -39,13 +42,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.example.instagramclone.DestinationScreen
 import com.example.instagramclone.IgViewModel
 import com.example.instagramclone.R
+import com.example.instagramclone.data.Status
+import com.example.instagramclone.data.UserData
+import java.time.format.TextStyle
 
 @Composable
 fun NotificationMessage(vm: IgViewModel) {
@@ -209,7 +217,118 @@ fun CommonRow(imageUrl: String?, name: String?, onItemClick: () -> Unit) {
                 .background(Color.Red)
         )
 
-        Text(text = name ?: "---", fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = 4.dp))
+        Text(
+            text = name ?: "---", fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(start = 4.dp)
+        )
     }
 }
+
+@Composable
+fun userRecommendationCard(userImage: String?, userName: String?) {
+    Column {
+        Card(
+            modifier = Modifier
+                .padding(8.dp)
+                .size(64.dp),
+            shape = CircleShape
+        ) {
+
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                if (userImage.isNullOrEmpty()) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_user),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(Color.Gray)
+                    )
+                } else {
+                    commonImage(data = userImage)
+                }
+
+            }
+        }
+
+        Text(
+            text = userName.toString(),
+            modifier = Modifier.padding(8.dp),
+            color = Color.Black
+        )
+
+    }
+}
+
+@Composable
+fun UserRecommendationItem(
+    user: UserData, // Assuming UserData is your data class for user information
+    onUserItemClick: (String) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 8.dp)
+            .clickable {
+                onUserItemClick(user.userId!!)
+            }
+    ) {
+        userRecommendationCard(userImage = user.imageUrl, userName = user.userName)
+    }
+}
+
+@Composable
+fun TitleText(text: String) {
+    Text(
+        text = text,
+        fontWeight = FontWeight.Bold,
+        fontSize = 35.sp,
+        modifier = Modifier.padding(8.dp)
+    )
+}
+
+@Composable
+fun UserStatusItem(
+    user: Status, // Assuming UserData is your data class for user information
+    onUserItemClick: (String) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 8.dp)
+            .clickable {
+                onUserItemClick(user.user.userId!!)
+            }
+    ) {
+        userStatusCard(userImage = user.imageUrl)
+    }
+}
+
+@Composable
+fun userStatusCard(userImage: String?) {
+    Column {
+        Card(
+            modifier = Modifier
+                .padding(8.dp)
+                .size(64.dp),
+            shape = CircleShape
+        ) {
+
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                if (userImage.isNullOrEmpty()) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_user),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(Color.Gray)
+                    )
+                } else {
+                    commonImage(data = userImage)
+                }
+
+            }
+        }
+    }
+}
+
+

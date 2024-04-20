@@ -65,6 +65,7 @@ fun ChatListScreen(navController: NavController, vm: IgViewModel) {
                         .fillMaxSize()
                         .padding(it)
                 ) {
+                    TitleText(text = "Chats")
 
                     if (chats.isEmpty())
                         Column(
@@ -127,7 +128,7 @@ fun FAB(
                 OutlinedTextField(
                     value = addChatNumber.value,
                     onValueChange = { addChatNumber.value = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
                 )
             }
         )

@@ -10,6 +10,7 @@ import com.example.instagramclone.data.CommentData
 import com.example.instagramclone.data.Event
 import com.example.instagramclone.data.Message
 import com.example.instagramclone.data.PostData
+import com.example.instagramclone.data.Status
 import com.example.instagramclone.data.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
@@ -17,6 +18,7 @@ import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
@@ -30,6 +32,7 @@ const val POSTS = "posts"
 const val COMMENTS = "comments"
 const val CHATS = "chat"
 const val MESSAGES = "messages"
+const val STATUS = "status"
 
 @HiltViewModel
 class IgViewModel @Inject constructor(
@@ -42,6 +45,8 @@ class IgViewModel @Inject constructor(
     val userData = mutableStateOf<UserData?>(null)
 
     val userProfile = mutableStateOf<UserData?>(null)
+
+    val userRecommendation = mutableStateOf<MutableList<UserData>>(mutableListOf())
 
     val refreshPostsProgress = mutableStateOf(false)
     val posts = mutableStateOf<List<PostData>>(listOf())
@@ -66,15 +71,18 @@ class IgViewModel @Inject constructor(
 
     val sortedUsersList = mutableStateOf<List<UserData>>(listOf())
 
-    var userFromPost = UserData()
-
     //Chat functionality
     val chats = mutableStateOf<List<ChatData>>(listOf())
     val inProgressChats = mutableStateOf(false)
 
     val chatMessages = mutableStateOf<List<Message>>(listOf())
     val inProgressChatMessages = mutableStateOf(false)
-    var currentChatMessagesListener: ListenerRegistration ?= null
+    var currentChatMessagesListener: ListenerRegistration? = null
+
+    val status = mutableStateOf<List<Status>>(listOf())
+    val inProgressStatus = mutableStateOf(false)
+
+    val chatId = mutableStateOf("")
 
 
     init {
@@ -83,6 +91,7 @@ class IgViewModel @Inject constructor(
         signedIn.value = currentUser != null
         currentUser?.uid?.let { uid ->
             getUserData(uid)
+
         }
     }
 
@@ -200,6 +209,8 @@ class IgViewModel @Inject constructor(
                 getPersonalizedFeed()
                 user?.userId?.let { it1 -> getFollowers(it1) }
                 populateChats()
+                getUserRecommendations()
+                populateStatuses()
                 //popUpNotification.value = Event("UserData retrieved successfully")
             }
             .addOnFailureListener { exc ->
@@ -299,6 +310,7 @@ class IgViewModel @Inject constructor(
         postsFeed.value = listOf()
         comments.value = listOf()
         chats.value = listOf()
+        userRecommendation.value = mutableListOf()
     }
 
     fun onNewPost(uri: Uri, description: String, userId: String, onPostSuccess: () -> Unit) {
@@ -724,16 +736,16 @@ class IgViewModel @Inject constructor(
             .set(message)
     }
 
-    fun populateChat(chatId: String){
+    fun populateChat(chatId: String) {
         inProgressChatMessages.value = true
         currentChatMessagesListener = db.collection(CHATS)
             .document(chatId)
             .collection(MESSAGES)
             .addSnapshotListener { value, error ->
-                if (error != null){
+                if (error != null) {
                     handleException(error)
                 }
-                if (value != null){
+                if (value != null) {
                     chatMessages.value = value.documents
                         .mapNotNull { it.toObject<Message>() }
                         .sortedBy { it.timestamp }
@@ -743,8 +755,102 @@ class IgViewModel @Inject constructor(
             }
     }
 
-    fun depopulateChat(){
+    fun depopulateChat() {
         chatMessages.value = listOf()
         currentChatMessagesListener = null
     }
+
+    fun getChatId(currentUserId: String, userId: String) {
+        db.collection(CHATS)
+            .whereEqualTo("user1.userId", userId)
+            .whereEqualTo("user2.userId", currentUserId)
+            .get()
+            .addOnSuccessListener { document->
+                document.forEach{
+                    chatId.value = it.id
+                }
+            }
+            .addOnFailureListener {
+                handleException(it)
+            }
+
+    }
+
+    fun getUserRecommendations(){
+        db.collection(USERS).get()
+            .addOnSuccessListener { documents ->
+
+                documents.forEach { doc ->
+                    val user = doc.toObject<UserData>()
+                    if ((userData.value?.following?.contains(user.userId) == false && userData.value!!.userId != user.userId) || (userData.value?.following == null && userData.value!!.userId != user.userId)){
+                        userRecommendation.value.add(user)
+                    }
+                }
+
+            }
+            .addOnFailureListener { exc ->
+                handleException(exc, "Not able to retreive followers")
+            }
+    }
+
+    private fun createStatus(imageUrl: String){
+        val newStatus = Status(
+            ChatUser(
+                userData.value?.userId,
+                userData.value?.userName,
+                userData.value?.imageUrl
+            ),
+            imageUrl,
+            System.currentTimeMillis()
+        )
+
+        db.collection(STATUS).document().set(newStatus)
+    }
+
+    fun uploadStatus(imageUri: Uri){
+        uploadImage(imageUri){
+            createStatus(imageUrl = it.toString())
+        }
+    }
+
+    private fun populateStatuses(){
+        inProgressStatus.value = true
+        val milliTimeDelta = 24L * 60 * 60 * 1000
+        val cutoff = System.currentTimeMillis() - milliTimeDelta
+
+        db.collection(USERS)
+            .addSnapshotListener { value, error ->
+                if (error != null){
+                    handleException(error)
+                }else{
+                    val currentConnections = arrayListOf(userData.value?.userId)
+                    val users = value?.toObjects<UserData>()
+
+                    users?.forEach { user ->
+                        if (userData.value?.following?.contains(user.userId) == true){
+                            if (user.userId == userData.value?.userId){
+                                currentConnections.add(user.userId)
+                            }else{
+                                currentConnections.add(user.userId)
+                            }
+                        }
+
+                    }
+                    db.collection(STATUS)
+                        .whereGreaterThan("timestamp", cutoff)
+                        .whereIn("user.userId", currentConnections)
+                        .addSnapshotListener { value, error ->
+                            if (error != null){
+                                handleException(error)
+                            }
+                            if(value != null){
+                                status.value = value.toObjects()
+                            }
+                            inProgressStatus.value = false
+                        }
+                }
+            }
+    }
+
+
 }

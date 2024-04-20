@@ -42,6 +42,8 @@ import com.example.instagramclone.main.NotificationMessage
 import com.example.instagramclone.main.SearchScreen
 import com.example.instagramclone.main.SingleChatScreen
 import com.example.instagramclone.main.SinglePostScreen
+import com.example.instagramclone.main.SingleStatusScreen
+import com.example.instagramclone.main.StatusListScreen
 import com.example.instagramclone.main.UserPostsScreen
 
 import com.example.instagramclone.ui.theme.InstagramCloneTheme
@@ -98,6 +100,12 @@ sealed class DestinationScreen(val route: String) {
     object userPosts: DestinationScreen("userPosts/{userId}"){
         fun createRoute(userId: String) = "userPosts/${userId}"
     }
+
+    object StatusList: DestinationScreen("status")
+
+    object SingleStatus: DestinationScreen("status/{userId}"){
+        fun createRoute(userId: String) = "status/${userId}"
+    }
 }
 
 @Composable
@@ -115,6 +123,10 @@ fun InstagramApp() {
 
         composable(DestinationScreen.ChatListScreen.route) {
             ChatListScreen(navController = navController, vm = vm)
+        }
+
+        composable(DestinationScreen.StatusList.route) {
+            StatusListScreen(navController = navController, vm = vm)
         }
 
         composable(DestinationScreen.Login.route) {
@@ -156,13 +168,14 @@ fun InstagramApp() {
             postId?.let { CommentScreen(navController = navController, vm = vm, postId = it) }
         }
 
+        composable(DestinationScreen.SingleStatus.route){navBackStackEntry->
+            val userId = navBackStackEntry.arguments?.getString("userId")
+            userId?.let {
+                SingleStatusScreen(navController = navController, vm = vm, userId = userId) }
+        }
+
         composable(DestinationScreen.SingleChat.route){
-            val chatId = it.arguments?.getString("chatId")
-            chatId?.let {
-                SingleChatScreen(navController = navController, vm = vm, chatId = it)
-            }
-
-
+            SingleChatScreen(navController = navController, vm = vm, chatId = "123")
         }
 
         composable(DestinationScreen.Followers.route){navBackStackEntry->

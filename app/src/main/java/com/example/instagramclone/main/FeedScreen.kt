@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.TextStyle
@@ -59,7 +60,6 @@ fun FeedScreen(navController: NavController, vm: IgViewModel) {
     val userData = vm.userData.value
     val personalizedFeed = vm.postsFeed.value
     val personalizedFeedLoading = vm.postsFeedProgress.value
-
 
     val helloTexts = listOf(
         "Hello",          // English
@@ -84,8 +84,6 @@ fun FeedScreen(navController: NavController, vm: IgViewModel) {
         "Sveiki",         // Lithuanian
         // Add more greetings as needed
     )
-
-
 
 
     val currentHelloIndex = remember { mutableStateOf(0) }
@@ -137,7 +135,6 @@ fun FeedScreen(navController: NavController, vm: IgViewModel) {
 
             }
 
-
             Image(
                 painter = painterResource(id = R.drawable.ig_logo),
                 contentDescription = null,
@@ -147,6 +144,7 @@ fun FeedScreen(navController: NavController, vm: IgViewModel) {
                     .align(Alignment.Top)
             )
         }
+
         PostsList(
             posts = personalizedFeed,
             modifier = Modifier.weight(1f),
@@ -176,9 +174,99 @@ fun PostsList(
         modifier = modifier.background(color = Color.Transparent),
 
         ) {
-        LazyColumn {
-            items(items = posts) {
 
+        LazyColumn {
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .background(color = Color(android.graphics.Color.parseColor("#e2e8f0")))
+                        .padding(12.dp)
+                        .shadow(4.dp),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White)
+                    ) {
+                        // Other UI components...
+
+                        Text(
+                            text = "People You May Follow:",
+                            color = Color.Black,
+                            modifier = Modifier.padding(top = 8.dp, start = 12.dp, bottom = 8.dp),
+                            style = TextStyle(fontWeight = FontWeight.Bold)
+                        )
+
+                        LazyRow(
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        ) {
+                            items(vm.userRecommendation.value) { user ->
+                                UserRecommendationItem(
+                                    user = user,
+                                    onUserItemClick = { userId ->
+                                        vm.getUserProfile(userId)
+                                        navController.navigate(
+                                            DestinationScreen.userPosts.createRoute(
+                                                userId
+                                            )
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+
+
+            }
+
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .background(color = Color(android.graphics.Color.parseColor("#e2e8f0")))
+                        .padding(12.dp)
+                        .shadow(4.dp),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White)
+                    ) {
+                        // Other UI components...
+
+                        Text(
+                            text = "Status :",
+                            color = Color.Black,
+                            modifier = Modifier.padding(top = 8.dp, start = 12.dp, bottom = 8.dp),
+                            style = TextStyle(fontWeight = FontWeight.Bold)
+                        )
+
+                        LazyRow(
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        ) {
+                            items(vm.status.value) { user ->
+                                UserStatusItem(
+                                    user = user,
+                                    onUserItemClick = { userId ->
+                                        vm.getUserProfile(userId)
+                                        navController.navigate(
+                                            DestinationScreen.SingleStatus.createRoute(
+                                                userId
+                                            )
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            items(items = posts) { post ->
                 Card(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -189,22 +277,20 @@ fun PostsList(
                 ) {
                     Post(
                         navController = navController,
-                        post = it,
+                        post = post,
                         currentUserId = currentUserId,
                         vm = vm
                     ) {
                         navigateTo(
                             navController,
                             DestinationScreen.SinglePost,
-                            NavParams(
-                                "post", it
-                            )
+                            NavParams("post", post)
                         )
                     }
                 }
-
             }
         }
+
         if (loading) {
             CommonProgressSpinner()
         }
@@ -361,5 +447,14 @@ fun likeCommentItem(post: PostData, vm: IgViewModel, onCommentClick: () -> Unit)
         Text(text = post.postDescription ?: "", fontWeight = FontWeight.Bold)
     }
 }
+
+
+
+
+
+
+
+
+
 
 

@@ -22,6 +22,7 @@ enum class BottomNavigationItem(val icon: Int, val navDestination: DestinationSc
     FEED(R.drawable.ic_home, DestinationScreen.Feed),
     SEARCH(R.drawable.ic_search, DestinationScreen.Search),
     MESSAGES(R.drawable.ic_chat, DestinationScreen.ChatListScreen),
+    STATUSES(R.drawable.ic_status, DestinationScreen.StatusList),
     POSTS(R.drawable.ic_person, DestinationScreen.MyPosts),
 
 }

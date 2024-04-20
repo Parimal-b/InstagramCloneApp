@@ -7,6 +7,7 @@ data class UserData(
     var imageUrl: String? = null,
     var bio: String? = null,
     var following: List<String>? = null,
+    var chatId: String ?= null
 ) {
     fun toMap() = mapOf(
         "userId" to userId,
@@ -34,4 +35,10 @@ data class Message(
     val sentBy: String ?= "",
     val message: String ?= "",
     val timestamp: String ?= ""
+)
+
+data class Status(
+    val user: ChatUser = ChatUser(),
+    val imageUrl: String ?= null,
+    val timestamp: Long? ?= null
 )

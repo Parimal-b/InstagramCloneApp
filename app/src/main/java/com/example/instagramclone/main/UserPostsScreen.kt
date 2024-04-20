@@ -44,6 +44,10 @@ fun UserPostsScreen(navController: NavController, vm: IgViewModel, userId: Strin
     val followers = vm.userFollowers.value
     val following = userData?.following
 
+    val chats = vm.chats.value
+
+    vm.getChatId(currentUserData?.userId.toString(), userData?.userId.toString())
+
     Column {
         Column(modifier = Modifier.weight(1f)) {
             Row {
@@ -67,7 +71,7 @@ fun UserPostsScreen(navController: NavController, vm: IgViewModel, userId: Strin
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "${following?.size}\nfollowing",
+                    text = "${following?.size ?: 0}\nfollowing",
                     modifier = Modifier
                         .weight(1f)
                         .align(Alignment.CenterVertically)
@@ -88,33 +92,73 @@ fun UserPostsScreen(navController: NavController, vm: IgViewModel, userId: Strin
                 Text(text = userData?.bio ?: "")
             }
 
-            OutlinedButton(
-                onClick = { vm.onFollowClick(userData?.userId!!)  },
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(Color.Transparent),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 0.dp,
-                    pressedElevation = 0.dp,
-                    disabledElevation = 0.dp
-                ),
-                shape = RoundedCornerShape(10)
+            Row(
+
             ) {
-                if (currentUserData?.userId == userData?.userId) {
-                    //Current user's post
-                } else if (currentUserData?.following?.contains(userData?.userId) == true) {
-                    Text(
-                        text = "Following",
-                        color = Color.Gray,
-                        modifier = Modifier.clickable { vm.onFollowClick(userData?.userId!!) })
-                } else {
-                    Text(
-                        text = "Follow",
-                        color = Color.Blue,
-                        modifier = Modifier.clickable { vm.onFollowClick(userData?.userId!!) })
+                OutlinedButton(
+                    onClick = { vm.onFollowClick(userData?.userId!!)  },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                        .weight(1f)
+                    ,
+                    colors = ButtonDefaults.buttonColors(Color.Transparent),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 0.dp,
+                        pressedElevation = 0.dp,
+                        disabledElevation = 0.dp
+                    ),
+                    shape = RoundedCornerShape(10)
+                ) {
+                    if (currentUserData?.userId == userData?.userId) {
+                        //Current user's post
+                    } else if (currentUserData?.following?.contains(userData?.userId) == true) {
+                        Text(
+                            text = "Following",
+                            color = Color.Gray,
+                            modifier = Modifier.clickable { vm.onFollowClick(userData?.userId!!) })
+                    } else {
+                        Text(
+                            text = "Follow",
+                            color = Color.Blue,
+                            modifier = Modifier.clickable { vm.onFollowClick(userData?.userId!!) })
+                    }
                 }
+
+                if (currentUserData?.following?.contains(userData?.userId) == true){
+                    OutlinedButton(
+                        onClick = {
+
+                        },
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth()
+                            .weight(1f),
+                        colors = ButtonDefaults.buttonColors(Color.Transparent),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 0.dp,
+                            pressedElevation = 0.dp,
+                            disabledElevation = 0.dp
+                        ),
+                        shape = RoundedCornerShape(10)
+                    ) {
+                        Text(
+                            text = "Message",
+                            color = Color.Blue,
+                            modifier = Modifier.clickable {
+                                if (vm.chatId.value.isNotEmpty()){
+                                    navController.navigate(DestinationScreen.SingleChat.createRoute(vm.chatId.value))
+                                }
+                                else{
+                                    
+                                }
+
+                            })
+                    }
+                }
+
             }
+
             UserPostList(
                 isContextLoading = isLoading,
                 postsLoading = postsLoading,
