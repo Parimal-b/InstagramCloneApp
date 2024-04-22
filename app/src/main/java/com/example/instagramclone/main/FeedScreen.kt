@@ -48,10 +48,13 @@ import kotlinx.coroutines.launch
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.TextStyle
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun FeedScreen(navController: NavController, vm: IgViewModel) {
@@ -94,69 +97,77 @@ fun FeedScreen(navController: NavController, vm: IgViewModel) {
             currentHelloIndex.value = (currentHelloIndex.value + 1) % helloTexts.size
         }
     }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
+    SwipeRefresh(
+        state = rememberSwipeRefreshState(isRefreshing = false),
+        onRefresh = {
+            // Your refresh logic here
+            vm.refreshData()
+        },
+        modifier = Modifier.fillMaxSize()
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
                 .background(Color.White)
-
         ) {
-            userImageCard(userImage = userData?.imageUrl)
-            Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(Color.White)
+
+            ) {
+                userImageCard(userImage = userData?.imageUrl)
                 Column {
-                    Crossfade(
-                        targetState = helloTexts[currentHelloIndex.value],
-                        animationSpec = tween(durationMillis = 1000, easing = LinearOutSlowInEasing)
-                    ) { targetText ->
+                    Column {
+                        Crossfade(
+                            targetState = helloTexts[currentHelloIndex.value],
+                            animationSpec = tween(durationMillis = 1000, easing = LinearOutSlowInEasing)
+                        ) { targetText ->
+                            Text(
+                                text = "${targetText},",
+                                modifier = Modifier
+                                    .padding(top = 12.dp, start = 5.dp)
+                                    .width(200.dp)
+                                    .height(20.dp),
+                                color = Color.Red,
+                                style = TextStyle(fontWeight = FontWeight.Bold)
+                            )
+                        }
+
                         Text(
-                            text = "${targetText},",
-                            modifier = Modifier
-                                .padding(top = 12.dp, start = 5.dp)
-                                .width(200.dp)
-                                .height(20.dp),
-                            color = Color.Red,
+                            text = "${userData?.userName}", modifier = Modifier
+                                .padding(top = 8.dp, start = 5.dp),
                             style = TextStyle(fontWeight = FontWeight.Bold)
                         )
                     }
 
-                    Text(
-                        text = "${userData?.userName}", modifier = Modifier
-                            .padding(top = 8.dp, start = 5.dp),
-                        style = TextStyle(fontWeight = FontWeight.Bold)
-                    )
+
                 }
 
-
+                Image(
+                    painter = painterResource(id = R.drawable.ig_logo),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(70.dp)
+                        .padding(end = 0.dp)
+                        .align(Alignment.Top)
+                )
             }
 
-            Image(
-                painter = painterResource(id = R.drawable.ig_logo),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(70.dp)
-                    .padding(end = 0.dp)
-                    .align(Alignment.Top)
+            PostsList(
+                posts = personalizedFeed,
+                modifier = Modifier.weight(1f),
+                loading = personalizedFeedLoading or userDataLoading,
+                navController = navController,
+                vm = vm,
+                currentUserId = userData?.userId ?: ""
+            )
+            BottomNavigationMenu(
+                selectedItem = BottomNavigationItem.FEED,
+                navController = navController
             )
         }
-
-        PostsList(
-            posts = personalizedFeed,
-            modifier = Modifier.weight(1f),
-            loading = personalizedFeedLoading or userDataLoading,
-            navController = navController,
-            vm = vm,
-            currentUserId = userData?.userId ?: ""
-        )
-        BottomNavigationMenu(
-            selectedItem = BottomNavigationItem.FEED,
-            navController = navController
-        )
     }
 
 }

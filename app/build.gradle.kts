@@ -114,5 +114,8 @@ dependencies {
     // JUnit dependencies
     testImplementation("junit:junit:4.13.2")
 
+    //Swiper Refresh
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.20.0")
+
 }
 

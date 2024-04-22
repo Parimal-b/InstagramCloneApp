@@ -175,7 +175,10 @@ fun InstagramApp() {
         }
 
         composable(DestinationScreen.SingleChat.route){
-            SingleChatScreen(navController = navController, vm = vm, chatId = "123")
+            val chatId = it.arguments?.getString("chatId")
+            chatId?.let {
+                SingleChatScreen(navController = navController, vm = vm, chatId = chatId)
+            }
         }
 
         composable(DestinationScreen.Followers.route){navBackStackEntry->

@@ -64,10 +64,10 @@ fun SingleChatScreen(navController: NavController, vm: IgViewModel, chatId:Strin
     }
 
     var reply by rememberSaveable { mutableStateOf("") }
-    val currentChat = vm.chats.value.first { it.chatId == chatId }
+    val currentChat = vm.chats.value.firstOrNull { it.chatId == chatId }
     val myId = vm.userData.value
-    val chatUser = if (myId?.userId == currentChat.user1.userId) currentChat.user2
-    else currentChat.user1
+    val chatUser = if (myId?.userId == currentChat?.user1?.userId) currentChat?.user2
+    else currentChat?.user1
     val onSendReply = {
         vm.onSendReply(chatId, reply)
         reply = ""
@@ -76,7 +76,7 @@ fun SingleChatScreen(navController: NavController, vm: IgViewModel, chatId:Strin
 
     Column(modifier = Modifier.fillMaxSize()) {
         // Chat header
-        ChatHeader(name = chatUser.userName?: "", imageUrl = chatUser.imageUrl ?: "") {
+        ChatHeader(name = chatUser?.userName?: "", imageUrl = chatUser?.imageUrl ?: "") {
             navController.popBackStack()
             vm.depopulateChat()
         }

@@ -95,6 +95,14 @@ class IgViewModel @Inject constructor(
         }
     }
 
+    fun refreshData(){
+        val currentUser = auth.currentUser
+        signedIn.value = currentUser != null
+        currentUser?.uid?.let { uid ->
+            getUserData(uid)
+        }
+    }
+
     val popUpNotification = mutableStateOf<Event<String>?>(null)
     fun onSignUp(
         userName: String,
@@ -761,9 +769,10 @@ class IgViewModel @Inject constructor(
     }
 
     fun getChatId(currentUserId: String, userId: String) {
+        chatId.value = ""
         db.collection(CHATS)
-            .whereEqualTo("user1.userId", userId)
-            .whereEqualTo("user2.userId", currentUserId)
+            .whereEqualTo("user1.userId", currentUserId)
+            .whereEqualTo("user2.userId", userId)
             .get()
             .addOnSuccessListener { document->
                 document.forEach{
@@ -776,22 +785,26 @@ class IgViewModel @Inject constructor(
 
     }
 
-    fun getUserRecommendations(){
-        db.collection(USERS).get()
-            .addOnSuccessListener { documents ->
+    fun getUserRecommendations() {
+        db.collection(USERS)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    handleException(error, "Not able to retrieve user recommendations")
+                    return@addSnapshotListener
+                }
 
-                documents.forEach { doc ->
+                val currentUserFollowing = userData.value?.following ?: emptyList()
+                userRecommendation.value.clear()
+
+                value?.forEach { doc ->
                     val user = doc.toObject<UserData>()
-                    if ((userData.value?.following?.contains(user.userId) == false && userData.value!!.userId != user.userId) || (userData.value?.following == null && userData.value!!.userId != user.userId)){
+                    if (!currentUserFollowing.contains(user.userId) && userData.value?.userId != user.userId) {
                         userRecommendation.value.add(user)
                     }
                 }
-
-            }
-            .addOnFailureListener { exc ->
-                handleException(exc, "Not able to retreive followers")
             }
     }
+
 
     private fun createStatus(imageUrl: String){
         val newStatus = Status(

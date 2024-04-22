@@ -1,9 +1,8 @@
 
-†kotlin:S6619Ο";Remove this useless elvis operation ?:, it always succeeds.(Ϊγδωÿÿÿÿ8χ’λο1J$bfc17310-3b41-4a34-bfc1-9a16df6c0080
-†kotlin:S6619ε";Remove this useless elvis operation ?:, it always succeeds.(Ϊγδωÿÿÿÿ8χ’λο1J$7e52ca45-7a5a-46f4-a292-edf65cdf37bc
-ckotlin:S125Y"Remove this commented out code.(©Θ±8›χ’λο1J$ea7e262c-e349-4d22-b753-0e584a8fc27c
-xkotlin:S1144¦"2Remove this unused private "convertPeople" method.(‹μΞ‰8±χ’λο1J$d7ad0fe2-ab56-44d2-ad6f-93c9d9f306fd
-_kotlin:S1128"Remove this unused import.(ΣΌ”8άχ’λο1J$ec4420d9-3842-49b8-9d55-7844efdbbeda
-¥kotlin:S1192ά"_Define a constant instead of duplicating this literal "Not able to retreive followers" 3 times.(–ΝΖ 8ΰχ’λο1J$384bad49-448c-4702-931e-88f49ddd350d
-kotlin:S3776°"RRefactor this method to reduce its Cognitive Complexity from 21 to the 15 allowed.(Ρ›¶”όÿÿÿÿ8θχ’λο1J$bb9774c8-f234-4feb-a60a-85a3aa967f61
-΅kotlin:S3923Ώ"[Remove this conditional structure or edit its code blocks so that they're not all the same.(πΈ8ψχ’λο1J$03f4cc82-ac49-4b6a-9a79-c8b0a945007c
+†kotlin:S6619Χ";Remove this useless elvis operation ?:, it always succeeds.(Ϊγδωÿÿÿÿ8­ΗΨπο1J$83cb0f14-e339-450f-b621-a79494cbe5bc
+†kotlin:S6619ν";Remove this useless elvis operation ?:, it always succeeds.(Ϊγδωÿÿÿÿ8­ΗΨπο1J$b56a3eab-23b5-4634-9257-791304a180ab
+ckotlin:S125Y"Remove this commented out code.(©Θ±8°ΗΨπο1J$507bad1a-6857-4711-82d2-e4e124fc014e
+xkotlin:S1144®"2Remove this unused private "convertPeople" method.(‹μΞ‰8ΞΗΨπο1J$799c196c-2c39-44bd-adba-63581a8d98e1
+_kotlin:S1128"Remove this unused import.(ΣΌ”8ώΗΨπο1J$71a9ed16-cd10-4e46-acf4-a27e8bba8fc4
+kotlin:S3776½"RRefactor this method to reduce its Cognitive Complexity from 21 to the 15 allowed.(Ρ›¶”όÿÿÿÿ8Νγ‘π1J$699e8eb4-cd4b-42b5-8e56-93461970c91f
+΅kotlin:S3923Μ"[Remove this conditional structure or edit its code blocks so that they're not all the same.(πΈ8ΰγ‘π1J$df3aec27-8883-49aa-85bc-c44a9be24ee0

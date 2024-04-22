@@ -44,8 +44,6 @@ fun UserPostsScreen(navController: NavController, vm: IgViewModel, userId: Strin
     val followers = vm.userFollowers.value
     val following = userData?.following
 
-    val chats = vm.chats.value
-
     vm.getChatId(currentUserData?.userId.toString(), userData?.userId.toString())
 
     Column {
@@ -150,7 +148,7 @@ fun UserPostsScreen(navController: NavController, vm: IgViewModel, userId: Strin
                                     navController.navigate(DestinationScreen.SingleChat.createRoute(vm.chatId.value))
                                 }
                                 else{
-                                    
+
                                 }
 
                             })
