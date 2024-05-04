@@ -51,10 +51,11 @@ fun ChatListScreen(navController: NavController, vm: IgViewModel) {
         val showDialog = remember { mutableStateOf(false) }
         val onFabClick: () -> Unit = { showDialog.value = true }
         val onDismiss: () -> Unit = { showDialog.value = false }
-        val onAddChat: (String) -> Unit = {
-            vm.onAddChat(it)
+        val onAddChat: (String, () -> Unit) -> Unit = { userName, onSuccess ->
+            vm.onAddChat(userName, onSuccess)
             showDialog.value = false
         }
+
 
         Scaffold(
             floatingActionButton = { FAB(showDialog.value, onFabClick, onDismiss, onAddChat) },
@@ -110,16 +111,15 @@ fun FAB(
     showDialog: Boolean,
     onFabClick: () -> Unit,
     onDismiss: () -> Unit,
-    onAddChat: (String) -> Unit
+    onAddChat: (String, () -> Unit) -> Unit
 ) {
-
     val addChatNumber = remember { mutableStateOf("") }
 
-    if (showDialog)
+    if (showDialog) {
         AlertDialog(
             onDismissRequest = onDismiss,
             confirmButton = {
-                Button(onClick = { onAddChat(addChatNumber.value) }) {
+                Button(onClick = { onAddChat(addChatNumber.value) { } }) {
                     Text(text = "Add chat")
                 }
             },
@@ -132,6 +132,7 @@ fun FAB(
                 )
             }
         )
+    }
 
     FloatingActionButton(
         onClick = onFabClick,
@@ -145,5 +146,4 @@ fun FAB(
             tint = Color.White,
         )
     }
-
 }

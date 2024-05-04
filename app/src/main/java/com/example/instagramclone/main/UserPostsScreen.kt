@@ -17,6 +17,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,7 +32,7 @@ import com.example.instagramclone.IgViewModel
 import com.example.instagramclone.data.PostData
 
 @Composable
-fun UserPostsScreen(navController: NavController, vm: IgViewModel, userId: String){
+fun UserPostsScreen(navController: NavController, vm: IgViewModel, userId: String) {
 
     val followingUserList = vm.userProfile.value?.following
 
@@ -45,6 +47,8 @@ fun UserPostsScreen(navController: NavController, vm: IgViewModel, userId: Strin
     val following = userData?.following
 
     vm.getChatId(currentUserData?.userId.toString(), userData?.userId.toString())
+    val currentChatId by remember { vm.chatId }
+
 
     Column {
         Column(modifier = Modifier.weight(1f)) {
@@ -94,12 +98,11 @@ fun UserPostsScreen(navController: NavController, vm: IgViewModel, userId: Strin
 
             ) {
                 OutlinedButton(
-                    onClick = { vm.onFollowClick(userData?.userId!!)  },
+                    onClick = { vm.onFollowClick(userData?.userId!!) },
                     modifier = Modifier
                         .padding(8.dp)
                         .fillMaxWidth()
-                        .weight(1f)
-                    ,
+                        .weight(1f),
                     colors = ButtonDefaults.buttonColors(Color.Transparent),
                     elevation = ButtonDefaults.buttonElevation(
                         defaultElevation = 0.dp,
@@ -123,9 +126,16 @@ fun UserPostsScreen(navController: NavController, vm: IgViewModel, userId: Strin
                     }
                 }
 
-                if (currentUserData?.following?.contains(userData?.userId) == true){
+                if (currentUserData?.following?.contains(userData?.userId) == true) {
                     OutlinedButton(
                         onClick = {
+                            if (currentChatId.isNotEmpty()) {
+                                navController.navigate(DestinationScreen.SingleChat.createRoute(currentChatId))
+                            } else {
+                                vm.onAddChat(userData?.userName.toString()) {
+                                    navController.navigate(DestinationScreen.SingleChat.createRoute(vm.chatId.value))
+                                }
+                            }
 
                         },
                         modifier = Modifier
@@ -142,51 +152,46 @@ fun UserPostsScreen(navController: NavController, vm: IgViewModel, userId: Strin
                     ) {
                         Text(
                             text = "Message",
-                            color = Color.Blue,
-                            modifier = Modifier.clickable {
-                                if (vm.chatId.value.isNotEmpty()){
-                                    navController.navigate(DestinationScreen.SingleChat.createRoute(vm.chatId.value))
-                                }
-                                else{
-
-                                }
-
-                            })
+                            color = Color.Blue
+                        )
                     }
                 }
-
             }
 
-            UserPostList(
-                isContextLoading = isLoading,
-                postsLoading = postsLoading,
-                posts = posts,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(1.dp)
-                    .fillMaxSize()
-            ) { post ->
-                //OnPost Click Method
-                navigateTo(
-                    navController = navController,
-                    DestinationScreen.SinglePost,
-                    NavParams("post", post)
-                )
-            }
         }
 
+        UserPostList(
+            isContextLoading = isLoading,
+            postsLoading = postsLoading,
+            posts = posts,
+            modifier = Modifier
+                .weight(1f)
+                .padding(1.dp)
+                .fillMaxSize()
+        ) { post ->
+            //OnPost Click Method
+            navigateTo(
+                navController = navController,
+                DestinationScreen.SinglePost,
+                NavParams("post", post)
+            )
+        }
         BottomNavigationMenu(
             selectedItem = BottomNavigationItem.POSTS,
             navController = navController
         )
     }
 
+
 }
+
 
 @Composable
 fun UserProfileImage(imageUrl: String?) {
-    Box(modifier = Modifier
-        .padding(top = 16.dp)) {
+    Box(
+        modifier = Modifier
+            .padding(top = 16.dp)
+    ) {
 
         userImageCard(
             userImage = imageUrl, modifier = Modifier

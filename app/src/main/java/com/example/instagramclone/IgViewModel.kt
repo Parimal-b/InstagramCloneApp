@@ -656,7 +656,7 @@ class IgViewModel @Inject constructor(
 
 
     //Chat functions
-    fun onAddChat(userName: String) {
+    fun onAddChat(userName: String, onSuccess: () -> Unit) {
         if (userName.isEmpty()) {
             handleException(customMessage = "Field should not be empty")
         } else {
@@ -664,13 +664,13 @@ class IgViewModel @Inject constructor(
                 .where(
                     Filter.or(
                         Filter.and(
-                            Filter.equalTo("user1.name", userName),
-                            Filter.equalTo("user2.name", userData.value?.userName)
+                            Filter.equalTo("user1.userName", userName),
+                            Filter.equalTo("user2.userName", userData.value?.userName)
                         ),
 
                         Filter.and(
-                            Filter.equalTo("user1.name", userData.value?.userName),
-                            Filter.equalTo("user2.name", userName)
+                            Filter.equalTo("user1.userName", userData.value?.userName),
+                            Filter.equalTo("user2.userName", userName)
                         )
                     )
                 )
@@ -679,11 +679,11 @@ class IgViewModel @Inject constructor(
                     if (it.isEmpty) {
                         db.collection(USERS).whereEqualTo("userName", userName)
                             .get()
-                            .addOnSuccessListener {
-                                if (it.isEmpty) {
-                                    handleException(customMessage = "Cannot retrive the user $userName")
+                            .addOnSuccessListener { querySnapshot ->
+                                if (querySnapshot.isEmpty) {
+                                    handleException(customMessage = "Cannot retrieve the user $userName")
                                 } else {
-                                    val chatPartner = it.toObjects<UserData>()[0]
+                                    val chatPartner = querySnapshot.toObjects<UserData>()[0]
                                     val id = db.collection(CHATS).document().id
                                     val chat = ChatData(
                                         id,
@@ -700,17 +700,22 @@ class IgViewModel @Inject constructor(
                                         )
                                     )
                                     db.collection(CHATS).document(id).set(chat)
+                                        .addOnSuccessListener {
+                                            chatId.value = id
+                                            onSuccess() // Execute the onSuccess callback
+                                        }
+                                        .addOnFailureListener { handleException(it) }
                                 }
                             }
-                            .addOnFailureListener {
-                                handleException(it)
-                            }
+                            .addOnFailureListener { handleException(it) }
                     } else {
-                        handleException(customMessage = "Chat Already exist")
+                        handleException(customMessage = "Chat already exists")
                     }
                 }
+                .addOnFailureListener { handleException(it) }
         }
     }
+
 
     private fun populateChats() {
         inProgressChats.value = true
@@ -769,21 +774,42 @@ class IgViewModel @Inject constructor(
     }
 
     fun getChatId(currentUserId: String, userId: String) {
-        chatId.value = ""
+        chatId.value = "" // Assuming chatId is a LiveData or similar variable
         db.collection(CHATS)
             .whereEqualTo("user1.userId", currentUserId)
             .whereEqualTo("user2.userId", userId)
             .get()
-            .addOnSuccessListener { document->
-                document.forEach{
-                    chatId.value = it.id
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    // If documents are found, update chatId with the ID of the first document
+                    chatId.value = documents.documents[0].id
+                } else {
+                    // If no matching document is found, try the reverse query
+                    db.collection(CHATS)
+                        .whereEqualTo("user1.userId", userId)
+                        .whereEqualTo("user2.userId", currentUserId)
+                        .get()
+                        .addOnSuccessListener { reverseDocuments ->
+                            if (!reverseDocuments.isEmpty) {
+                                // If documents are found in the reverse query, update chatId
+                                chatId.value = reverseDocuments.documents[0].id
+                            } else {
+                                // If no matching document is found in both queries
+                                println("No chat found between users: $currentUserId and $userId")
+                            }
+                        }
+                        .addOnFailureListener { exception ->
+                            // Handle failures in the reverse query
+                            handleException(exception)
+                        }
                 }
             }
-            .addOnFailureListener {
-                handleException(it)
+            .addOnFailureListener { exception ->
+                // Handle failures in the initial query
+                handleException(exception)
             }
-
     }
+
 
     fun getUserRecommendations() {
         db.collection(USERS)

@@ -50,9 +50,12 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.sp
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
@@ -256,21 +259,28 @@ fun PostsList(
                             style = TextStyle(fontWeight = FontWeight.Bold)
                         )
 
-                        LazyRow(
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        ) {
-                            items(vm.status.value) { user ->
-                                UserStatusItem(
-                                    user = user,
-                                    onUserItemClick = { userId ->
-                                        vm.getUserProfile(userId)
-                                        navController.navigate(
-                                            DestinationScreen.SingleStatus.createRoute(
-                                                userId
+                        if (vm.status.value.isEmpty()){
+                            Text(
+                                text = "No Status to show", modifier = Modifier.padding(16.dp),
+                                style = LocalTextStyle.current.copy(fontSize = 16.sp, fontFamily = FontFamily.SansSerif)
+                            )
+                        }else{
+                            LazyRow(
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            ) {
+                                items(vm.status.value) { user ->
+                                    UserStatusItem(
+                                        user = user,
+                                        onUserItemClick = { userId ->
+                                            vm.getUserProfile(userId)
+                                            navController.navigate(
+                                                DestinationScreen.SingleStatus.createRoute(
+                                                    userId
+                                                )
                                             )
-                                        )
-                                    }
-                                )
+                                        }
+                                    )
+                                }
                             }
                         }
                     }

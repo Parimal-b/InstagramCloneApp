@@ -1,8 +1,10 @@
 
-†kotlin:S6619×";Remove this useless elvis operation ?:, it always succeeds.(Úãäùÿÿÿÿ8­ÇØğï1J$83cb0f14-e339-450f-b621-a79494cbe5bc
-†kotlin:S6619í";Remove this useless elvis operation ?:, it always succeeds.(Úãäùÿÿÿÿ8­ÇØğï1J$b56a3eab-23b5-4634-9257-791304a180ab
-ckotlin:S125Y"Remove this commented out code.(©È±8°ÇØğï1J$507bad1a-6857-4711-82d2-e4e124fc014e
-xkotlin:S1144®"2Remove this unused private "convertPeople" method.(‹ìÎ‰8ÎÇØğï1J$799c196c-2c39-44bd-adba-63581a8d98e1
-_kotlin:S1128"Remove this unused import.(Ó¼”8şÇØğï1J$71a9ed16-cd10-4e46-acf4-a27e8bba8fc4
-kotlin:S3776½"RRefactor this method to reduce its Cognitive Complexity from 21 to the 15 allowed.(Ñ›¶”üÿÿÿÿ8Íã‘ğ1J$699e8eb4-cd4b-42b5-8e56-93461970c91f
-¡kotlin:S3923Ì"[Remove this conditional structure or edit its code blocks so that they're not all the same.(ğ¸8àã‘ğ1J$df3aec27-8883-49aa-85bc-c44a9be24ee0
+†kotlin:S6619×";Remove this useless elvis operation ?:, it always succeeds.(Úãäùÿÿÿÿ8àÚÇÙñ1J$3b657818-2037-451f-837b-894eed042e0d
+†kotlin:S6619í";Remove this useless elvis operation ?:, it always succeeds.(Úãäùÿÿÿÿ8áÚÇÙñ1J$150221ec-f851-45ea-9b54-211b53ffc00d
+ckotlin:S125Y"Remove this commented out code.(©È±8ãÚÇÙñ1J$9f262887-c580-4355-9c5f-db945c357c19
+xkotlin:S1144®"2Remove this unused private "convertPeople" method.(‹ìÎ‰8ûÚÇÙñ1J$113bda38-2de2-43f9-b1df-8060bb68af7f
+_kotlin:S1128"Remove this unused import.(Ó¼”8ªÛÇÙñ1J$a869e15f-cc14-4209-9ce7-9f365da0bc47
+’kotlin:S1192Ô"MDefine a constant instead of duplicating this literal "user1.userId" 3 times.(øòX8­ÛÇÙñ1J$0bafb43d-acfc-4870-8dde-c5b0c63924b1
+˜kotlin:S1192Õ"MDefine a constant instead of duplicating this literal "user2.userId" 3 times.(åßÜøşÿÿÿÿ8­ÛÇÙñ1J$f54fb95e-a145-4255-b7e3-f3e52743acc9
+kotlin:S3776×"RRefactor this method to reduce its Cognitive Complexity from 21 to the 15 allowed.(Ñ›¶”üÿÿÿÿ8¶ÛÇÙñ1J$d5e3898f-8ca0-4764-82e6-5a50a58a7cc6
+¡kotlin:S3923æ"[Remove this conditional structure or edit its code blocks so that they're not all the same.(ğ¸8ÉÛÇÙñ1J$0f633081-19fe-44c5-ad7f-a2f0ea6d516b
