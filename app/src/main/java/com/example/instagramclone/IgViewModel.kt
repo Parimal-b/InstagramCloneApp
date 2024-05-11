@@ -53,6 +53,7 @@ class IgViewModel @Inject constructor(
     val userPosts = mutableStateOf<List<PostData>>(listOf())
 
     val searchedPosts = mutableStateOf<List<PostData>>(listOf())
+    val searchOnlyPeople = mutableStateOf<List<UserData>>(listOf())
     val searchedPeopleByPost = mutableStateOf<List<PostData>>(listOf())
     val searchedPostsByUser = mutableStateOf<List<PostData>>(listOf())
     val searchedPeople = mutableStateOf<List<PostData>>(listOf())
@@ -459,6 +460,24 @@ class IgViewModel @Inject constructor(
                 .addOnSuccessListener {
                     convertPosts(it, searchedPeople)
                     convertPosts(it, searchedPostsByUser)
+                    searchedPostsProgress.value = false
+                }
+                .addOnFailureListener { exc ->
+                    handleException(exc, "Cannot search posts")
+                    searchedPostsProgress.value = false
+                }
+        }
+    }
+
+    //Search People
+    fun searchPeople(searchTerm: String) {
+        if (searchTerm.isNotEmpty()) {
+            searchedPostsProgress.value = true
+            db.collection(USERS)
+                .whereEqualTo("userName", searchTerm)
+                .get()
+                .addOnSuccessListener {
+                    convertPeople(it, searchOnlyPeople)
                     searchedPostsProgress.value = false
                 }
                 .addOnFailureListener { exc ->

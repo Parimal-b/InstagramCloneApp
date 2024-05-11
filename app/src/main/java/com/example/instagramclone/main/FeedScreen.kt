@@ -47,9 +47,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.draw.shadow
@@ -194,9 +197,9 @@ fun PostsList(
                 Card(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .background(color = Color(android.graphics.Color.parseColor("#e2e8f0")))
+                        .background(color = Color(android.graphics.Color.parseColor("#F98195")))
                         .padding(12.dp)
-                        .shadow(4.dp),
+                        .shadow(108.dp),
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Column(
@@ -240,9 +243,9 @@ fun PostsList(
                 Card(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .background(color = Color(android.graphics.Color.parseColor("#e2e8f0")))
+                        .background(color = Color(android.graphics.Color.parseColor("#C1C7FE")))
                         .padding(12.dp)
-                        .shadow(4.dp),
+                        .shadow(108.dp),
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Column(
@@ -291,9 +294,9 @@ fun PostsList(
                 Card(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .background(color = Color(android.graphics.Color.parseColor("#e2e8f0")))
+                        .background(color = Color(android.graphics.Color.parseColor("#4D474A")))
                         .padding(12.dp)
-                        .shadow(4.dp),
+                        .shadow(108.dp),
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Post(
@@ -339,7 +342,12 @@ fun Post(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(color = Color.White)
+            .background(color = Color.White),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 100.dp,
+            pressedElevation = 100.dp,
+            disabledElevation = 100.dp
+        ),
     ) {
         Column(
             modifier = Modifier.background(Color.White)
@@ -423,10 +431,9 @@ fun Post(
 fun likeCommentItem(post: PostData, vm: IgViewModel, onCommentClick: () -> Unit) {
 
     val userData = vm.userData.value
-    val commentData = vm.comments.value
 
     Row(
-        modifier = Modifier.padding(8.dp),
+        modifier = Modifier.padding(8.dp).shadow(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
@@ -437,13 +444,7 @@ fun likeCommentItem(post: PostData, vm: IgViewModel, onCommentClick: () -> Unit)
                 ) R.drawable.ic_like else R.drawable.ic_dislike
             ),
             contentDescription = null,
-            modifier = Modifier.size(24.dp),
-            colorFilter = ColorFilter.tint(
-                if (post.likes?.contains(
-                        userData?.userId ?: ""
-                    ) == true
-                ) Color.Red else Color.Gray
-            )
+            modifier = Modifier.size(24.dp)
         )
         Image(
             painter = painterResource(id = R.drawable.ic_comment),
@@ -463,9 +464,9 @@ fun likeCommentItem(post: PostData, vm: IgViewModel, onCommentClick: () -> Unit)
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        Text(text = post.userName ?: "", fontWeight = FontWeight.Bold, color = Color.Gray)
+        Text(text = post.userName ?: "", fontWeight = FontWeight.Bold, color = Color.Gray, modifier = Modifier.shadow(16.dp))
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = post.postDescription ?: "", fontWeight = FontWeight.Bold)
+        Text(text = post.postDescription ?: "", fontWeight = FontWeight.Bold, modifier = Modifier.shadow(16.dp))
     }
 }
 

@@ -23,7 +23,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -43,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -131,27 +134,39 @@ fun commonImage(
 
 @Composable
 fun userImageCard(
-    userImage: String?, modifier: Modifier = Modifier
+    userImage: String?,
+    modifier: Modifier = Modifier
         .padding(8.dp)
-        .size(64.dp)
+        .size(64.dp),
+    elevation: Dp = 4.dp // Set the elevation value here
 ) {
-    Card(shape = CircleShape, modifier = modifier) {
+    Card(
+        shape = CircleShape,
+        modifier = modifier,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 10.dp,
+            pressedElevation = 10.dp,
+            disabledElevation = 10.dp
+        ) // Apply elevation directly to the Card
+    ) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             if (userImage.isNullOrEmpty()) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_user), contentDescription = null,
+                    painter = painterResource(id = R.drawable.ic_user),
+                    contentDescription = null,
                     colorFilter = ColorFilter.tint(Color.Gray)
                 )
             } else {
                 commonImage(data = userImage)
             }
-
         }
     }
 }
+
+
 
 @Composable
 fun CommonDivider() {

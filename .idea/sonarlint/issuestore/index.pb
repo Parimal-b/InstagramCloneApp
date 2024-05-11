@@ -437,3 +437,9 @@ Q.idea/sonarlint/securityhotspotstore/5/e/5e5cfd829ff7df89f6926f7aa0a469af9f8ef8
 Q.idea/sonarlint/securityhotspotstore/6/0/60b40c5ca381debe3da9fd0de6d825e57cbd79cb,6\e\6ef2f7c21dd85ab0a8e918f1886797eac0b274f1
 Å
 Q.idea/sonarlint/securityhotspotstore/6/5/65a79b0561778b743bd7271ebeb80e4d2678941d,f\d\fd78d79cbf5e64e4102758bfcbbd7abd8062bc2e
+m
+=app/src/main/java/com/example/instagramclone/data/PostData.kt,a\5\a5d6b975daa35fecaaac0ca895508c3cd30ebc92
+r
+Bapp/src/main/java/com/example/instagramclone/main/NewPostScreen.kt,a\5\a5e2d927a34d24fcfa18bbc9f1998bdbc9023969
+x
+Happ/src/main/java/com/example/instagramclone/main/MyPostScreenPreview.kt,b\1\b1e263718b8ba0b197259719344493bf01236b37

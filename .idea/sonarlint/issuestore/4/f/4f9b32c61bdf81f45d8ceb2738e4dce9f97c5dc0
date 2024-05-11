@@ -1,10 +1,10 @@
 
-†kotlin:S6619×";Remove this useless elvis operation ?:, it always succeeds.(Úãäùÿÿÿÿ8àÚÇÙñ1J$3b657818-2037-451f-837b-894eed042e0d
-†kotlin:S6619í";Remove this useless elvis operation ?:, it always succeeds.(Úãäùÿÿÿÿ8áÚÇÙñ1J$150221ec-f851-45ea-9b54-211b53ffc00d
-ckotlin:S125Y"Remove this commented out code.(©È±8ãÚÇÙñ1J$9f262887-c580-4355-9c5f-db945c357c19
-xkotlin:S1144®"2Remove this unused private "convertPeople" method.(‹ìÎ‰8ûÚÇÙñ1J$113bda38-2de2-43f9-b1df-8060bb68af7f
-_kotlin:S1128"Remove this unused import.(Ó¼”8ªÛÇÙñ1J$a869e15f-cc14-4209-9ce7-9f365da0bc47
-’kotlin:S1192Ô"MDefine a constant instead of duplicating this literal "user1.userId" 3 times.(øòX8­ÛÇÙñ1J$0bafb43d-acfc-4870-8dde-c5b0c63924b1
-˜kotlin:S1192Õ"MDefine a constant instead of duplicating this literal "user2.userId" 3 times.(åßÜøşÿÿÿÿ8­ÛÇÙñ1J$f54fb95e-a145-4255-b7e3-f3e52743acc9
-kotlin:S3776×"RRefactor this method to reduce its Cognitive Complexity from 21 to the 15 allowed.(Ñ›¶”üÿÿÿÿ8¶ÛÇÙñ1J$d5e3898f-8ca0-4764-82e6-5a50a58a7cc6
-¡kotlin:S3923æ"[Remove this conditional structure or edit its code blocks so that they're not all the same.(ğ¸8ÉÛÇÙñ1J$0f633081-19fe-44c5-ad7f-a2f0ea6d516b
+†kotlin:S6619ê";Remove this useless elvis operation ?:, it always succeeds.(Úãäùÿÿÿÿ8àÚÇÙñ1J$9b3dbc24-e7fe-455b-897e-2190f1a4bbf3
+†kotlin:S6619€";Remove this useless elvis operation ?:, it always succeeds.(Úãäùÿÿÿÿ8áÚÇÙñ1J$ecd76008-c278-4c09-9764-9faa9770606a
+ckotlin:S125Z"Remove this commented out code.(©È±8ãÚÇÙñ1J$15e64ded-3b9b-4d05-8f8a-05344ae1c294
+_kotlin:S1128"Remove this unused import.(Ó¼”8ªÛÇÙñ1J$a471845c-8763-4182-96d6-bebaa278b05e
+škotlin:S1192Å"TDefine a constant instead of duplicating this literal "Cannot search posts" 3 times.(çã®õ8ò“´ªõ1J$b52ea4b2-4064-46fc-bc60-85da12718fa8
+’kotlin:S1192ç"MDefine a constant instead of duplicating this literal "user1.userId" 3 times.(øòX8­ÛÇÙñ1J$ad2c5687-c81b-49be-9acb-276324e396ee
+˜kotlin:S1192è"MDefine a constant instead of duplicating this literal "user2.userId" 3 times.(åßÜøşÿÿÿÿ8­ÛÇÙñ1J$dc5815e8-bd1a-4976-94aa-14101d7d7d65
+kotlin:S3776ê"RRefactor this method to reduce its Cognitive Complexity from 21 to the 15 allowed.(Ñ›¶”üÿÿÿÿ8¶ÛÇÙñ1J$781a85fc-9813-45f9-9c64-e38899ed8a49
+¡kotlin:S3923ù"[Remove this conditional structure or edit its code blocks so that they're not all the same.(ğ¸8ÉÛÇÙñ1J$0eb19441-1801-4df9-8704-cb60cf8297e8

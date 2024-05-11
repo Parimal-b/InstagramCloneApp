@@ -87,6 +87,7 @@ fun FollowersList(userName: String, userImage: String, vm: IgViewModel, navContr
             Row(
                 modifier = Modifier
                     .padding(8.dp)
+                    .background(Color.White)
                     .clickable {
                         val currentUser = vm.userData.value
                         if (currentUser?.userId != folUserId){
@@ -98,7 +99,6 @@ fun FollowersList(userName: String, userImage: String, vm: IgViewModel, navContr
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Follower Image (You can replace this with the actual follower image)
                 Card(shape = CircleShape,
                     modifier = Modifier
                         .padding(8.dp)
@@ -106,8 +106,8 @@ fun FollowersList(userName: String, userImage: String, vm: IgViewModel, navContr
                     val painter = rememberImagePainter(
                         data = userImage,
                         builder = {
-                            placeholder(R.drawable.ic_person) // Replace with your placeholder image resource
-                            error(R.drawable.ic_person) // Replace with your error image resource
+                            placeholder(R.drawable.ic_person)
+                            error(R.drawable.ic_person)
                         }
                     )
 
@@ -116,7 +116,6 @@ fun FollowersList(userName: String, userImage: String, vm: IgViewModel, navContr
                         contentDescription = null,
                         modifier = Modifier,
                         contentScale = ContentScale.Crop
-                        // Add your additional modifiers if needed
                     )
                 }
 
