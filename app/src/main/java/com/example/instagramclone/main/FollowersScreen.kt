@@ -75,8 +75,7 @@ fun FollowersList(userName: String, userImage: String, vm: IgViewModel, navContr
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .shadow(4.dp),
+            .padding(8.dp),
         shape = MaterialTheme.shapes.medium
     ) {
         Column(
@@ -87,7 +86,6 @@ fun FollowersList(userName: String, userImage: String, vm: IgViewModel, navContr
             Row(
                 modifier = Modifier
                     .padding(8.dp)
-                    .background(Color.White)
                     .clickable {
                         val currentUser = vm.userData.value
                         if (currentUser?.userId != folUserId){

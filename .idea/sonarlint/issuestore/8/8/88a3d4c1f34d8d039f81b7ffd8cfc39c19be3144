@@ -1,7 +1,13 @@
 
-_kotlin:S1128"Remove this unused import.(„ºö8É’ê¡õ1J$7715777e-e36a-4913-9406-4debebced163
-dkotlin:S1128&"Remove this unused import.(û¬ã‚úÿÿÿÿ8É’ê¡õ1J$5dbecc4f-86b8-4c77-a581-ffaaa5e2498d
-_kotlin:S1128*"Remove this unused import.(¡ û­8É’ê¡õ1J$31c7ea39-a3ad-4a6c-984d-5df618bf0ad7
-_kotlin:S1128-"Remove this unused import.(ÅâÊ¸8É’ê¡õ1J$d0f6187f-b34e-4b5e-ba8f-03f299b97112
-kotlin:S3776—"RRefactor this method to reduce its Cognitive Complexity from 26 to the 15 allowed.(äÚå‘şÿÿÿÿ8Ğ’ê¡õ1J$f403690f-9162-45ef-89a2-85254ba09a83
-‡kotlin:S6511A"=Merge chained "if" statements into a single "when" statement.(Á¿ğĞıÿÿÿÿ8Ø’ê¡õ1J$6eabcde7-0880-42a6-a0e7-c28cfc44f177
+dkotlin:S1128"Remove this unused import.(é¢êáüÿÿÿÿ8¯ë‘ú1J$8b52cf0a-6b34-4d75-84bb-cf7233ad3204
+_kotlin:S1128"Remove this unused import.(„ºö8¯ë‘ú1J$b3c86b38-e0a7-41da-87b6-84e7df1fb63e
+dkotlin:S1128("Remove this unused import.(û¬ã‚úÿÿÿÿ8¯ë‘ú1J$0d12c3b7-61c5-46f3-b5c3-4fefc9ee2fa0
+_kotlin:S1128+"Remove this unused import.(®©Ô”8¯ë‘ú1J$bfcec1de-504b-441f-9d8b-35a03e4c903a
+_kotlin:S1128,"Remove this unused import.(¡ û­8¯ë‘ú1J$b52aa078-9147-4490-a737-84e9561f91b7
+_kotlin:S1128/"Remove this unused import.(ÅâÊ¸8¯ë‘ú1J$6fa9c664-9ecc-4036-a1a9-e3b372f8e25b
+_kotlin:S11281"Remove this unused import.(íí›8¯ë‘ú1J$8de08187-bb74-43d9-9e9e-3ce96e40c8a5
+_kotlin:S11287"Remove this unused import.(›»„Â8¯ë‘ú1J$36436580-0371-4ae3-bfaf-6f433109a16b
+dkotlin:S11288"Remove this unused import.(ÒÆ¢ùÿÿÿÿ8¯ë‘ú1J$4c33c112-1b4d-4014-8455-55b2d8ab1ba3
+dkotlin:S11289"Remove this unused import.(•ó†Ïÿÿÿÿÿ8¯ë‘ú1J$b5dac7b8-9744-4807-a27d-c80a17699e3c
+kotlin:S3776™"RRefactor this method to reduce its Cognitive Complexity from 26 to the 15 allowed.(äÚå‘şÿÿÿÿ8“¯ë‘ú1J$0282b7ed-0dc7-428c-ab0b-2a4d6cbc8020
+‡kotlin:S6511C"=Merge chained "if" statements into a single "when" statement.(Á¿ğĞıÿÿÿÿ8›¯ë‘ú1J$e9979416-687e-45dd-b71c-63a9017d851a

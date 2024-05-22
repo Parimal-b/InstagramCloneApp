@@ -208,8 +208,7 @@ fun SinglePostDisplay(
         Image(
             painter = painterResource(if (post.likes?.contains(userData?.userId ?: "") == true) R.drawable.ic_like else R.drawable.ic_dislike),
             contentDescription = null,
-            modifier = Modifier.size(24.dp),
-            colorFilter = ColorFilter.tint(if(post.likes?.contains(userData?.userId ?: "") == true) Color.Red else Color.Gray)
+            modifier = Modifier.size(24.dp)
         )
         Text(text = " ${post.likes?.size ?: 0} likes", modifier = Modifier.padding(start = 0.dp))
 

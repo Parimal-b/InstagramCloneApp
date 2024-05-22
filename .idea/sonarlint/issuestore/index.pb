@@ -441,5 +441,3 @@ m
 =app/src/main/java/com/example/instagramclone/data/PostData.kt,a\5\a5d6b975daa35fecaaac0ca895508c3cd30ebc92
 r
 Bapp/src/main/java/com/example/instagramclone/main/NewPostScreen.kt,a\5\a5e2d927a34d24fcfa18bbc9f1998bdbc9023969
-x
-Happ/src/main/java/com/example/instagramclone/main/MyPostScreenPreview.kt,b\1\b1e263718b8ba0b197259719344493bf01236b37

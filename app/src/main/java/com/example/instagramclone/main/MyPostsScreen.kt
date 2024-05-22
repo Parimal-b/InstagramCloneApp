@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -176,15 +178,6 @@ fun PostList(
     val followers = vm.followers.value
     if (postsLoading) {
         CommonProgressSpinner()
-    } else if (posts.isEmpty()) {
-        Column(
-            modifier = modifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-
-        ) {
-            if (!isContextLoading) Text(text = "No Posts Available")
-        }
     } else {
         LazyColumn(modifier = modifier) {
 
@@ -202,20 +195,33 @@ fun PostList(
             item {
                 Box {
                     ProfileBgImage(imageUrl = userData?.imageUrl, modifier = Modifier.alpha(0.4f))
-                    Column(modifier = Modifier.align(Alignment.Center)){
+                    Column(modifier = Modifier.align(Alignment.Center)) {
                         Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                             ProfileImage(userData?.imageUrl) {
                                 newPostImageLauncher.launch("image/*")
                             }
                         }
-                        Column(modifier = Modifier
-                            .padding(5.dp)
-                            .align(Alignment.CenterHorizontally)) {
+                        Column(
+                            modifier = Modifier
+                                .padding(5.dp)
+                                .align(Alignment.CenterHorizontally)
+                        ) {
                             val userNameDisplay =
                                 if (userData?.userName == null) "" else "@${userData?.userName}"
-                            Text(text = userNameDisplay, modifier = Modifier.align(Alignment.CenterHorizontally), fontSize = 32.sp)
-                            Text(text = userData?.name ?: "", fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.CenterHorizontally))
-                            Text(text = userData?.bio ?: "", modifier = Modifier.align(Alignment.CenterHorizontally))
+                            Text(
+                                text = userNameDisplay,
+                                modifier = Modifier.align(Alignment.CenterHorizontally),
+                                fontSize = 32.sp
+                            )
+                            Text(
+                                text = userData?.name ?: "",
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                            )
+                            Text(
+                                text = userData?.bio ?: "",
+                                modifier = Modifier.align(Alignment.CenterHorizontally)
+                            )
                         }
                         OutlinedButton(
                             onClick = { navigateTo(navController, DestinationScreen.Profile) },
@@ -231,7 +237,12 @@ fun PostList(
                             ),
                             shape = RoundedCornerShape(10)
                         ) {
-                            Text(text = "Edit Profile", color = Color.Black, fontWeight = FontWeight.Bold, fontFamily = FontFamily.SansSerif)
+                            Text(
+                                text = "Edit Profile",
+                                color = Color.Black,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily.SansSerif
+                            )
                         }
 
                     }
@@ -246,7 +257,7 @@ fun PostList(
                             .weight(1f)
                             .align(Alignment.CenterVertically)
                             .padding(vertical = 8.dp, horizontal = 2.dp) // Adjusted padding
-                            .border(1.dp, Color.White )
+                            .border(1.dp, Color.White)
                     ) {
                         Text(
                             text = "${posts.size}\nposts",
@@ -304,14 +315,51 @@ fun PostList(
                 }
 
             }
-            items(items = rows) { row ->
+            if (posts.isEmpty()) {
+                item {
+                    EmptyListComposable(posts = posts, modifier = modifier, isContextLoading = isContextLoading)
+                }
 
-                PostRow(item = row, onPostClick = onPostClick)
+            }else{
+                items(items = rows) { row ->
 
+                    PostRow(item = row, onPostClick = onPostClick)
+
+                }
+            }
+
+        }
+    }
+}
+
+@Composable
+fun EmptyListComposable(
+    posts: List<PostData>,
+    modifier: Modifier = Modifier,
+    isContextLoading: Boolean
+) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
+    val verticalPadding = when {
+        screenHeight < 800.dp -> 150.dp // Short screens
+        screenHeight < 1200.dp -> 200.dp // Medium screens
+        else -> 200.dp // Tall screens
+    }
+
+    if (posts.isEmpty()) {
+        Row(
+            modifier = modifier.fillMaxSize().padding(vertical = verticalPadding), // Ensure it fills the max available space
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            if (!isContextLoading) {
+                Text(text = "No Posts Available")
             }
         }
     }
 }
+
 
 @Composable
 fun PostRow(item: PostRow, onPostClick: (PostData) -> Unit) {
@@ -369,17 +417,6 @@ fun ProfileFillBgColor(modifier: Modifier) {
     Box(modifier = modifier.background(Color.Red))
 }
 
-@Preview
-@Composable
-fun PreviewMyPostsScreen() {
-    val navController = rememberNavController()
-    val viewModel = IgViewModel(
-        FirebaseAuth.getInstance(),
-        FirebaseFirestore.getInstance(),
-        FirebaseStorage.getInstance()
-    )
-    MyPostsScreen(navController, viewModel)
-}
 
 
 

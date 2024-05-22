@@ -71,8 +71,7 @@ fun FollowingsList(userName: String, userImage: String, searchedUserId: String, 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .shadow(4.dp),
+            .padding(8.dp),
         shape = MaterialTheme.shapes.medium
     ) {
         Column(

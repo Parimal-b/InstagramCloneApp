@@ -433,8 +433,9 @@ fun likeCommentItem(post: PostData, vm: IgViewModel, onCommentClick: () -> Unit)
     val userData = vm.userData.value
 
     Row(
-        modifier = Modifier.padding(8.dp).shadow(16.dp),
+        modifier = Modifier.padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
         Image(
             painter = painterResource(
@@ -464,9 +465,9 @@ fun likeCommentItem(post: PostData, vm: IgViewModel, onCommentClick: () -> Unit)
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        Text(text = post.userName ?: "", fontWeight = FontWeight.Bold, color = Color.Gray, modifier = Modifier.shadow(16.dp))
+        Text(text = post.userName ?: "", fontWeight = FontWeight.Bold, color = Color.Gray)
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = post.postDescription ?: "", fontWeight = FontWeight.Bold, modifier = Modifier.shadow(16.dp))
+        Text(text = post.postDescription ?: "", fontWeight = FontWeight.Bold)
     }
 }
 
