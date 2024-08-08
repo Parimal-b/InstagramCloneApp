@@ -1,4 +1,4 @@
-package com.example.instagramclone.auth
+package com.example.instagramclone.auth.screens.signup
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -25,19 +25,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.instagramclone.DestinationScreen
-import com.example.instagramclone.IgViewModel
 import com.example.instagramclone.R
 import com.example.instagramclone.main.CommonProgressSpinner
-import com.example.instagramclone.main.checkSignedIn
-import com.example.instagramclone.main.navigateTo
 
 @Composable
-fun SignUpScreen(navController: NavController, vm: IgViewModel) {
-    checkSignedIn(vm = vm, navController = navController)
+fun SignUpScreenScaffold(
+    isLoading: Boolean,
+    onNavToLoginScreenClick: () -> Unit,
+    onSignUpClick: (String, String, String) -> Unit
+) {
 
     val focus = LocalFocusManager.current
     Box(modifier = Modifier.fillMaxSize()) {
@@ -113,7 +112,7 @@ fun SignUpScreen(navController: NavController, vm: IgViewModel) {
             Button(
                 onClick = {
                     focus.clearFocus(force = true)
-                    vm.onSignUp(
+                    onSignUpClick(
                         userNameState.value.text,
                         emailState.value.text,
                         passState.value.text
@@ -127,12 +126,21 @@ fun SignUpScreen(navController: NavController, vm: IgViewModel) {
                 color = Color.Blue,
                 modifier = Modifier
                     .padding(8.dp)
-                    .clickable { navigateTo(navController, DestinationScreen.Login) })
+                    .clickable { onNavToLoginScreenClick() })
         }
 
-        val isLoading = vm.inProgress.value
         if (isLoading) {
             CommonProgressSpinner()
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SignUpScreenScaffoldPreview(){
+    SignUpScreenScaffold(
+        isLoading = false,
+        onNavToLoginScreenClick = {  },
+        onSignUpClick = { _, _, _ -> }
+    )
 }
